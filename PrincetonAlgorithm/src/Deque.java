@@ -23,55 +23,143 @@
 
 import java.util.Iterator;
 
-
 public class Deque<Item> implements Iterable<Item>{
 	private int capacity;
 	private int size;
 	private Item[] dequeArray;
+	private int front, back;
 	public final static int DEFAULT_CAPACITY = 10;
 	
 	// construct an empty deque
 	public Deque() {
 		this.capacity = DEFAULT_CAPACITY;
+		this.size = 0;
+		this.front = 0;
+		this.back = 0;
+		this.dequeArray = (Item[]) new Object[this.capacity];
 	}
 	
 	// is the deque empty?
 	public boolean isEmpty() {
-		return true;
+		if( size() == 0 ) {
+			return true;
+		}
+		return false;
+	}
+	
+	// return the capacity of the deque
+	public int getCapacity() {
+		return this.capacity;
 	}
 	
 	// return the number of items on the deque
 	public int size() {
-		return size;
+		return this.size;
 	}
 	
 	// add the item to the front
-	public void addFirst(Item item) {
+	public void addFirst(Item item) throws java.util.NoSuchElementException {
+		if (item == null) {
+			throw new java.util.NoSuchElementException();
+		}
 		
+		if(size() == 0) {
+			dequeArray[front] = item;
+		}
+		
+		if(front == 0 ) {
+			front = size() - 1;
+		}else {
+			front--;
+		}
+		dequeArray[front] = item;
 	}
 	
 	// add the item to the end
 	public void addLast(Item item) {
+		if(size() == 0) {
+			dequeArray[back] = item;
+		}
 		
+		if(back == size() - 1) {
+			back = 0;
+		}else {
+			back++;
+		}
+		dequeArray[back] = item;
 	}
 	
 	// remove and return the item from the front
-	public Item removeFirst() {
-		int first = 0;
-		return dequeArray[first];
+	public Item removeFirst() throws java.util.NoSuchElementException {
+		if(size() == 0) {
+			throw new java.util.NoSuchElementException();
+		}
+		
+		int oldfront = front;
+		if(front == size() - 1) {
+			front = 0;
+		}else{
+			front++;
+		}
+		return dequeArray[oldfront];
 	}
 	
 	// remove and return the item from the end
-	public Item removeLast() {
-		int last = size - 1;
-		return dequeArray[last];
+	public Item removeLast() throws java.util.NoSuchElementException {
+		if(size() == 0) {
+			throw new java.util.NoSuchElementException();
+		}
+		
+		int oldback = back;
+		if(back == 0){
+			back = size() - 1;
+		}else {
+			back--;
+		}
+		
+		return dequeArray[oldback];
 	}
 	
 	// return an iterator over items in order from front to end
 	public Iterator<Item> iterator() {
 		return null;
+	}
+	
+	public class MyIterator implements Iterator<Item> {
+		private Item[] stack;
+		
+		public MyIterator() {
+			stack = (Item[]) new Object[size()];
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Item next() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
+	
+	// double the capacity of the deque when it is full
+	// copy the original data to the new array
+	public void doubleCapacity() {
+		int newCapacity = capacity * 2;
+		
+		Item[] newArray = (Item[]) new Object[newCapacity];
+		
+		//iterator the deque to the new array
+		
+		this.dequeArray = newArray;
+		this.capacity = newCapacity;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
