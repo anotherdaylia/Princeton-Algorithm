@@ -21,6 +21,7 @@
  * date: Sept 23rd, 2015
  */
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item>{
@@ -36,7 +37,7 @@ public class Deque<Item> implements Iterable<Item>{
 		this.size = 0;
 		this.front = 0;
 		this.back = 0;
-		this.dequeArray = (Item[]) new Object[this.capacity];
+		this.dequeArray = (Item[]) new Object[DEFAULT_CAPACITY];
 	}
 	
 	// is the deque empty?
@@ -65,28 +66,32 @@ public class Deque<Item> implements Iterable<Item>{
 		
 		if(size() == 0) {
 			dequeArray[front] = item;
-		}
-		
-		if(front == 0 ) {
-			front = size() - 1;
+			size++;
 		}else {
-			front--;
+			if(front == 0 ) {
+				front = dequeArray.length - 1;
+			}else {
+				front--;
+			}
+			dequeArray[front] = item;
+			size++;
 		}
-		dequeArray[front] = item;
 	}
 	
 	// add the item to the end
 	public void addLast(Item item) {
 		if(size() == 0) {
 			dequeArray[back] = item;
+			size++;
+		} else{
+			if(back == dequeArray.length - 1) {
+				back = 0;
+			}else {
+				back++;
+			}
+			dequeArray[back] = item;
+			size++;
 		}
-		
-		if(back == size() - 1) {
-			back = 0;
-		}else {
-			back++;
-		}
-		dequeArray[back] = item;
 	}
 	
 	// remove and return the item from the front
@@ -96,11 +101,15 @@ public class Deque<Item> implements Iterable<Item>{
 		}
 		
 		int oldfront = front;
-		if(front == size() - 1) {
+		dequeArray[front] = null;
+		size--;
+		
+		if(front == dequeArray.length - 1) {
 			front = 0;
 		}else{
 			front++;
 		}
+		
 		return dequeArray[oldfront];
 	}
 	
@@ -111,8 +120,11 @@ public class Deque<Item> implements Iterable<Item>{
 		}
 		
 		int oldback = back;
+		dequeArray[back] = null;
+		size--;
+		
 		if(back == 0){
-			back = size() - 1;
+			back = dequeArray.length - 1;
 		}else {
 			back--;
 		}
@@ -122,27 +134,43 @@ public class Deque<Item> implements Iterable<Item>{
 	
 	// return an iterator over items in order from front to end
 	public Iterator<Item> iterator() {
-		return null;
+		return new MyIterator();
 	}
 	
 	public class MyIterator implements Iterator<Item> {
-		private Item[] stack;
+		private Item[] list;
+		private int size;
+		private int i;
 		
 		public MyIterator() {
-			stack = (Item[]) new Object[size()];
+			list = (Item[]) new Object[size()];
+			size = size();
+			i = 0;
 			
+			int j = 0;
+			while(front != back) {
+				if (front > size() - 1) {
+					front = 0;
+				}
+				list[j] = dequeArray[front];
+				front++;
+				j++;
+			}
 		}
 
 		@Override
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
-			return false;
+			return size !=  0;
 		}
 
 		@Override
 		public Item next() {
 			// TODO Auto-generated method stub
-			return null;
+			Item nextItem = list[i];
+			i++;
+			size--;
+			return nextItem;
 		}
 		
 	}
@@ -155,6 +183,12 @@ public class Deque<Item> implements Iterable<Item>{
 		Item[] newArray = (Item[]) new Object[newCapacity];
 		
 		//iterator the deque to the new array
+		Iterator<Item> it = new MyIterator();
+		int i = 0;
+		while(it.hasNext()){
+			newArray[i] = (Item) it.next();
+			i++;
+		}
 		
 		this.dequeArray = newArray;
 		this.capacity = newCapacity;
@@ -162,6 +196,25 @@ public class Deque<Item> implements Iterable<Item>{
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		Deque<Integer> deque = new Deque<Integer>();
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addFirst(1);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addFirst(2);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addFirst(3);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addLast(4);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addLast(5);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.addLast(6);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		
+		Iterator<Integer> it = deque.iterator();
+		while(it.hasNext()){
+			System.out.println(it.next());
+		}
 
 	}
 
