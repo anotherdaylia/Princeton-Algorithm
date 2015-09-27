@@ -18,4 +18,18 @@ public class DequeTest {
 
         assertEquals(deque.size(), 5);
     }
+
+    @Test
+    public void testComplexCases() {
+        Deque<Integer> deque = new Deque<>();
+
+        deque.addFirst(1);
+        deque.addFirst(2);
+        deque.addFirst(3);
+
+        deque.addLast(4);
+        deque.addLast(5);
+
+        assertEquals(deque.size(), 5);
+    }
 }

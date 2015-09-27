@@ -1,3 +1,4 @@
+
 package com.lia.lab;
 
 /**
@@ -23,6 +24,7 @@ package com.lia.lab;
  * date: Sept 23rd, 2015
  */
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item>{
@@ -160,23 +162,29 @@ public class Deque<Item> implements Iterable<Item>{
 			size = size();
 			i = 0;
 			
-			int j = 0;
-			while(front != back) {
-				if (front > dequeArray.length - 1) {
-					front = 0;
+			if (size == 0) {
+				list = null;
+			} else {
+				int j = 0;
+				while(size != 0 && front != back) {
+					if (front > dequeArray.length - 1) {
+						front = 0;
+					}
+					list[j] = dequeArray[front];
+					front++;
+					j++;
 				}
 				list[j] = dequeArray[front];
-				front++;
-				j++;
 			}
-			list[j] = dequeArray[front];
 		}
 
+		@Override
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
 			return size !=  0;
 		}
 
+		@Override
 		public Item next() {
 			// TODO Auto-generated method stub
 			if(hasNext()==false){
@@ -189,6 +197,7 @@ public class Deque<Item> implements Iterable<Item>{
 			return nextItem;
 		}
 
+		@Override
 		public void remove() {
 			// TODO Auto-generated method stub	
 			throw new java.lang.UnsupportedOperationException();
@@ -224,18 +233,22 @@ public class Deque<Item> implements Iterable<Item>{
 		// TODO Auto-generated method stub
 		Deque<Integer> deque = new Deque<Integer>();
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addFirst(1);
+		deque.addLast(1);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addFirst(2);
+		deque.addLast(2);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addFirst(3);
+		deque.addLast(3);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(4);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(5);
-		//System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.removeFirst();
 		deque.removeFirst();
+		deque.removeFirst();
+		deque.removeFirst();
+		deque.removeFirst();
+		//deque.removeLast();
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		
 		Iterator<Integer> it = deque.iterator();
