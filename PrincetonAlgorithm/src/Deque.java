@@ -64,6 +64,10 @@ public class Deque<Item> implements Iterable<Item>{
 			throw new java.util.NoSuchElementException();
 		}
 		
+		if(size() >= dequeArray.length/2){
+			doubleCapacity();
+		}
+		
 		if(size() == 0) {
 			dequeArray[front] = item;
 			size++;
@@ -79,7 +83,15 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// add the item to the end
-	public void addLast(Item item) {
+	public void addLast(Item item) throws java.util.NoSuchElementException {
+		if (item == null) {
+			throw new java.util.NoSuchElementException();
+		}
+		
+		if(size() >= dequeArray.length/2){
+			doubleCapacity();
+		}
+		
 		if(size() == 0) {
 			dequeArray[back] = item;
 			size++;
@@ -194,12 +206,13 @@ public class Deque<Item> implements Iterable<Item>{
 		
 		int j = 0;
 		while(front != back) {
-			if (front > dequeArray.length - 1) {
-				front = 0;
-			}
 			newArray[j] = dequeArray[front];
 			front++;
 			j++;
+			
+			if (front > dequeArray.length - 1) {
+				front = 0;
+			}
 		}
 		newArray[j] = dequeArray[front];
 		
@@ -215,13 +228,16 @@ public class Deque<Item> implements Iterable<Item>{
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addFirst(1);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(2);
+		deque.addFirst(2);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(3);
+		deque.addFirst(3);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(4);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(5);
+		//System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+		deque.removeFirst();
+		deque.removeFirst();
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		
 		Iterator<Integer> it = deque.iterator();
