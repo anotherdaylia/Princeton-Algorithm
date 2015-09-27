@@ -45,10 +45,7 @@ public class Deque<Item> implements Iterable<Item>{
 	
 	// is the deque empty?
 	public boolean isEmpty() {
-		if( size() == 0 ) {
-			return true;
-		}
-		return false;
+		return size() == 0;
 	}
 	
 	// return the capacity of the deque
@@ -187,7 +184,7 @@ public class Deque<Item> implements Iterable<Item>{
 		@Override
 		public Item next() {
 			// TODO Auto-generated method stub
-			if(hasNext()==false){
+			if(!hasNext()){
 				throw new java.util.NoSuchElementException();
 			}
 			
