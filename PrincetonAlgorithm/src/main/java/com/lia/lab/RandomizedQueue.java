@@ -22,21 +22,26 @@ package com.lia.lab;
  *  and construction in linear time; you may (and will need to) use a linear amount of extra memory per iterator.
  */
 import java.util.Iterator;
+import java.util.*;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 	private int capacity;
 	private int size;
-	private Item[] dequeArray;
-	public final static int DEFAULT_CAPACITY = 10;
+    private int index; //index of the most recent added element
+	private Item[] queueArray;
+	public final static int DEFAULT_CAPACITY = 4;
 	
 	// construct an empty randomized queue
 	public RandomizedQueue() {
-		
+        this.capacity = DEFAULT_CAPACITY;
+        this.size = 0;
+        this.index = 0;
+        this.queueArray = (Item[]) new Object[DEFAULT_CAPACITY];
 	}
 	
 	// is the queue empty?
 	public boolean isEmpty() {
-		return false;
+		return size()==0;
 	}
 	
 	// return the number of items on the queue
@@ -46,27 +51,137 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	
 	// add the item
 	public void enqueue(Item item) {
-		
+        if (item == null) {
+            throw new java.lang.NullPointerException();
+        }
+
+        if(size() >= queueArray.length/2){
+            doubleCapacity();
+        }
+
+        if(size() == 0) {
+            queueArray[index] = item;
+            size++;
+        }else {
+            index++;
+            queueArray[index] = item;
+            size++;
+        }
 	}
 	
 	// remove and return a random item
 	public Item dequeue() {
-		return null;
+        if (size() == 0) {
+            throw new java.util.NoSuchElementException();
+        }
+
+        Random randomGenerator = new Random();
+        int indexToRm = randomGenerator.nextInt(index+1);
+
+        Item itemToRm = queueArray[indexToRm];
+
+        queueArray[indexToRm] = queueArray[index];
+        queueArray[index] = null;
+        size--;
+        index--;
+
+        return itemToRm;
 	}
 	
 	// return (but do not remove) a random item
 	public Item sample() {
-		return null;
+        if (size() == 0) {
+            throw new java.util.NoSuchElementException();
+        }
+
+        Random randomGenerator = new Random();
+        int indexToRt = randomGenerator.nextInt(index+1);
+
+        return queueArray[indexToRt];
 	}
 	
 	// return an independent iterator over items in random order
 	public Iterator<Item> iterator() {
-		return null;
+        return new MyIterator();
 	}
+
+    public class MyIterator implements Iterator<Item> {
+        private Item[] list;
+        private int size;
+        private int i;
+
+        public MyIterator() {
+            list = (Item[]) new Object[size()];
+            size = size();
+            i = index;
+
+            for(int j = 0; j < size(); j++){
+                list[j] = queueArray[j];
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return size != 0;
+        }
+
+        @Override
+        public Item next() {
+            if(!hasNext()){
+                throw new java.util.NoSuchElementException();
+            }
+
+            Random randomGenerator = new Random();
+            int nextIndex = randomGenerator.nextInt(i + 1);
+
+            Item nextItem = queueArray[nextIndex];
+
+            queueArray[nextIndex] = queueArray[i];
+            queueArray[i] = null;
+            i--;
+            size--;
+
+            return nextItem;
+        }
+
+        @Override
+        public void remove() {
+            throw new java.lang.UnsupportedOperationException();
+        }
+    }
+
+    public void doubleCapacity() {
+        int newCapacity = capacity * 2;
+        Item[] newArray = (Item[]) new Object[newCapacity];
+
+        int j = 0;
+        while(j<= index) {
+            newArray[j] = queueArray[j];
+            j++;
+        }
+        //newArray[j] = queueArray[index];
+
+        this.queueArray = newArray;
+        this.capacity = newCapacity;
+        this.index = size() - 1;
+    }
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+        RandomizedQueue<Integer> rdQueue = new RandomizedQueue();
+        rdQueue.enqueue(1);
+        rdQueue.enqueue(2);
+        rdQueue.enqueue(3);
+        rdQueue.enqueue(4);
+        rdQueue.enqueue(5);
+        rdQueue.enqueue(6);
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
+        System.out.println(rdQueue.dequeue());
 	}
 
 }
