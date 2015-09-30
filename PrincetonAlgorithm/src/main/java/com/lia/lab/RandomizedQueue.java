@@ -21,8 +21,9 @@ package com.lia.lab;
  *  Additionally, your iterator implementation must support operations next() and hasNext() in constant worst-case time; 
  *  and construction in linear time; you may (and will need to) use a linear amount of extra memory per iterator.
  */
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Iterator;
-import java.util.*;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 	private int capacity;
@@ -75,8 +76,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new java.util.NoSuchElementException();
         }
 
-        Random randomGenerator = new Random();
-        int indexToRm = randomGenerator.nextInt(index+1);
+        int indexToRm = StdRandom.uniform(index+1);
 
         Item itemToRm = queueArray[indexToRm];
 
@@ -94,8 +94,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new java.util.NoSuchElementException();
         }
 
-        Random randomGenerator = new Random();
-        int indexToRt = randomGenerator.nextInt(index+1);
+        int indexToRt = StdRandom.uniform(index+1);
 
         return queueArray[indexToRt];
 	}
@@ -131,9 +130,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new java.util.NoSuchElementException();
             }
 
-            Random randomGenerator = new Random();
-            int nextIndex = randomGenerator.nextInt(i + 1);
-
+            int nextIndex = StdRandom.uniform(index+1);
             Item nextItem = queueArray[nextIndex];
 
             queueArray[nextIndex] = queueArray[i];
@@ -167,21 +164,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-        RandomizedQueue<Integer> rdQueue = new RandomizedQueue();
-        rdQueue.enqueue(1);
-        rdQueue.enqueue(2);
-        rdQueue.enqueue(3);
-        rdQueue.enqueue(4);
-        rdQueue.enqueue(5);
-        rdQueue.enqueue(6);
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
-        System.out.println(rdQueue.dequeue());
+
 	}
 
 }

@@ -13,6 +13,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -20,6 +21,20 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <!-- Install the jar by
+            mvn install:install-file  -Dfile=/Users/liqu/Documents/Coursera/PrincetonAlgorithm/algs4.jar -DgroupId=edu.princeton.cs -DartifactId=algs4 -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true
+        -->
+        <dependency>
+            <groupId>edu.princeton.cs</groupId>
+            <artifactId>algs4</artifactId>
+            <version>0.1</version>
+        </dependency>
     </dependencies>
 
+    <!--
+    how to execute
+    echo A B C D | java -cp target/PrincetonAlgorithm-1.0.jar:/Users/liqu/Documents/Coursera/PrincetonAlgorithm/algs4.jar com.lia.lab.Subset 3
+    -->
+
 </project>
+
