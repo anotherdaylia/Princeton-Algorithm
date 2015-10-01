@@ -26,13 +26,13 @@ package com.lia.lab;
 
 import java.util.Iterator;
 
-public class Deque<Item> implements Iterable<Item>{
-	private int capacity;
-	private int size;
-	private Item[] dequeArray;
-	private int front, back;
-	private final static int DEFAULT_CAPACITY = 4;
-	
+public class Deque<Item> implements Iterable<Item> {
+    private final static int DEFAULT_CAPACITY = 4;
+    private int capacity;
+    private int size;
+    private Item[] dequeArray;
+    private int front, back;
+
 	// construct an empty deque
 	public Deque() {
 		this.capacity = DEFAULT_CAPACITY;
@@ -58,16 +58,16 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// add the item to the front
-	public void addFirst(Item item) throws java.lang.NullPointerException {
+	public void addFirst(Item item) {
 		if (item == null) {
 			throw new java.lang.NullPointerException();
 		}
 		
-		if(size() >= dequeArray.length/2){
+		if (size() >= dequeArray.length/2){
 			doubleCapacity();
 		}
 		
-		if(size() == 0) {
+		if (size() == 0) {
 			dequeArray[front] = item;
 			size++;
 		}else {
@@ -87,14 +87,14 @@ public class Deque<Item> implements Iterable<Item>{
 			throw new java.lang.NullPointerException();
 		}
 		
-		if(size() >= dequeArray.length/2){
+		if (size() >= dequeArray.length/2){
 			doubleCapacity();
 		}
 		
-		if(size() == 0) {
+		if (size() == 0) {
 			dequeArray[back] = item;
 			size++;
-		} else{
+		} else {
 			if(back == dequeArray.length - 1) {
 				back = 0;
 			}else {
@@ -106,41 +106,41 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// remove and return the item from the front
-	public Item removeFirst() throws java.util.NoSuchElementException {
-		if(size() == 0) {
+	public Item removeFirst() {
+		if (size() == 0) {
 			throw new java.util.NoSuchElementException();
 		}
-		
-		int oldfront = front;
+
+        Item itemToRt = dequeArray[front];
 		dequeArray[front] = null;
 		size--;
 		
-		if(front == dequeArray.length - 1) {
+		if (front == dequeArray.length - 1) {
 			front = 0;
-		}else{
+		} else {
 			front++;
 		}
 		
-		return dequeArray[oldfront];
+		return itemToRt;
 	}
 	
 	// remove and return the item from the end
-	public Item removeLast() throws java.util.NoSuchElementException {
-		if(size() == 0) {
+	public Item removeLast() {
+		if (size() == 0) {
 			throw new java.util.NoSuchElementException();
 		}
-		
-		int oldback = back;
+
+        Item itemToRt = dequeArray[back];
 		dequeArray[back] = null;
 		size--;
 		
-		if(back == 0){
+		if (back == 0){
 			back = dequeArray.length - 1;
-		}else {
+		} else {
 			back--;
 		}
 		
-		return dequeArray[oldback];
+		return itemToRt;
 	}
 	
 	// return an iterator over items in order from front to end
@@ -149,28 +149,31 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	private class MyIterator implements Iterator<Item> {
-		private Item[] list;
-		private int size;
-		private int i;
-		
+        private Item[] list;
+        private int size;
+        private int i;
+		private int ifront, iback;
+
 		public MyIterator() {
 			list = (Item[]) new Object[size()];
 			size = size();
 			i = 0;
+            ifront = front;
+            iback = back;
 			
 			if (size == 0) {
 				list = null;
 			} else {
 				int j = 0;
-				while(size != 0 && front != back) {
-					if (front > dequeArray.length - 1) {
-						front = 0;
+				while(size != 0 && ifront != iback) {
+					if (ifront > dequeArray.length - 1) {
+						ifront = 0;
 					}
-					list[j] = dequeArray[front];
-					front++;
+					list[j] = dequeArray[ifront];
+					ifront++;
 					j++;
 				}
-				list[j] = dequeArray[front];
+				list[j] = dequeArray[ifront];
 			}
 		}
 
@@ -181,7 +184,7 @@ public class Deque<Item> implements Iterable<Item>{
 
 		@Override
 		public Item next() {
-			if(!hasNext()){
+			if (!hasNext()){
 				throw new java.util.NoSuchElementException();
 			}
 			
@@ -205,7 +208,7 @@ public class Deque<Item> implements Iterable<Item>{
 		Item[] newArray = (Item[]) new Object[newCapacity];
 		
 		int j = 0;
-		while(front != back) {
+		while (front != back) {
 			newArray[j] = dequeArray[front];
 			front++;
 			j++;
@@ -224,30 +227,7 @@ public class Deque<Item> implements Iterable<Item>{
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Deque<Integer> deque = new Deque<Integer>();
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(1);
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(2);
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(3);
-        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(4);
-        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.addLast(5);
-        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		deque.removeFirst();
-        deque.removeFirst();
-        deque.removeFirst();
-        deque.removeFirst();
-		deque.removeFirst();
-		//deque.removeLast();
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
-		
-		Iterator<Integer> it = deque.iterator();
-		while(it.hasNext()){
-			System.out.println(it.next());
-		}
+
 
 	}
 

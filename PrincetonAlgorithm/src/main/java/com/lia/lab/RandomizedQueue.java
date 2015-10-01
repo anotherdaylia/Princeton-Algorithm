@@ -8,7 +8,7 @@ package com.lia.lab;
  *  The order of two or more iterators to the same randomized queue must be mutually independent; 
  *  each iterator must maintain its own random order. 
  *  Throw a java.lang.NullPointerException if the client attempts to add a null item; 
- *  throw a java.util.NoSuchElementException if the client attempts to sample or dequeue an item from an empty randomized queue; 
+ *  throw a java.util.NoSuchElementException if the client attempts to sample or dequeue an item from an empty randomized queue;
  *  throw a java.lang.UnsupportedOperationException if the client calls the remove() method in the iterator; 
  *  throw a java.util.NoSuchElementException if the client calls the next() method in the iterator 
  *  and there are no more items to return.
@@ -26,11 +26,11 @@ import edu.princeton.cs.algs4.StdRandom;
 import java.util.Iterator;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-	private int capacity;
-	private int size;
+    private final static int DEFAULT_CAPACITY = 4;
+    private int capacity;
+    private int size;
     private int index; //index of the most recent added element
 	private Item[] queueArray;
-    private final static int DEFAULT_CAPACITY = 4;
 	
 	// construct an empty randomized queue
 	public RandomizedQueue() {
@@ -56,14 +56,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new java.lang.NullPointerException();
         }
 
-        if(size() >= queueArray.length/2){
+        if (size() >= queueArray.length/2){
             doubleCapacity();
         }
 
-        if(size() == 0) {
+        if (isEmpty()) {
             queueArray[index] = item;
             size++;
-        }else {
+        } else {
             index++;
             queueArray[index] = item;
             size++;
@@ -72,12 +72,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	
 	// remove and return a random item
 	public Item dequeue() {
-        if (size() == 0) {
+        if (isEmpty()) {
             throw new java.util.NoSuchElementException();
         }
 
-        int indexToRm = StdRandom.uniform(index+1);
+        if (size() == 1) {
+            Item itemToRm = queueArray[0];
+            queueArray[0] = null;
+            size--;
+            return itemToRm;
+        }
 
+        int indexToRm = StdRandom.uniform(index+1);
         Item itemToRm = queueArray[indexToRm];
 
         queueArray[indexToRm] = queueArray[index];
@@ -90,8 +96,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	
 	// return (but do not remove) a random item
 	public Item sample() {
-        if (size() == 0) {
+        if (isEmpty()) {
             throw new java.util.NoSuchElementException();
+        }
+
+        if (size() == 1) {
+            Item itemToRm = queueArray[0];
+            return itemToRm;
         }
 
         int indexToRt = StdRandom.uniform(index+1);
@@ -114,7 +125,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             size = size();
             i = index;
 
-            for(int j = 0; j < size(); j++){
+            for (int j = 0; j < size(); j++) {
                 list[j] = queueArray[j];
             }
         }
@@ -126,7 +137,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
-            if(!hasNext()){
+            if (!hasNext()){
                 throw new java.util.NoSuchElementException();
             }
 
@@ -152,7 +163,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         Item[] newArray = (Item[]) new Object[newCapacity];
 
         int j = 0;
-        while(j<= index) {
+        while (j<= index) {
             newArray[j] = queueArray[j];
             j++;
         }
