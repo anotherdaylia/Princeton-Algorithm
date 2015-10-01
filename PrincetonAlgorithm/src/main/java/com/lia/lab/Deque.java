@@ -24,7 +24,6 @@ package com.lia.lab;
  * date: Sept 23rd, 2015
  */
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item>{
@@ -32,7 +31,7 @@ public class Deque<Item> implements Iterable<Item>{
 	private int size;
 	private Item[] dequeArray;
 	private int front, back;
-	public final static int DEFAULT_CAPACITY = 4;
+	private final static int DEFAULT_CAPACITY = 4;
 	
 	// construct an empty deque
 	public Deque() {
@@ -49,7 +48,7 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// return the capacity of the deque
-	public int getCapacity() {
+	private int getCapacity() {
 		return this.capacity;
 	}
 	
@@ -59,9 +58,9 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// add the item to the front
-	public void addFirst(Item item) throws java.util.NoSuchElementException {
+	public void addFirst(Item item) throws java.lang.NullPointerException {
 		if (item == null) {
-			throw new java.util.NoSuchElementException();
+			throw new java.lang.NullPointerException();
 		}
 		
 		if(size() >= dequeArray.length/2){
@@ -83,9 +82,9 @@ public class Deque<Item> implements Iterable<Item>{
 	}
 	
 	// add the item to the end
-	public void addLast(Item item) throws java.util.NoSuchElementException {
+	public void addLast(Item item) throws java.lang.NullPointerException {
 		if (item == null) {
-			throw new java.util.NoSuchElementException();
+			throw new java.lang.NullPointerException();
 		}
 		
 		if(size() >= dequeArray.length/2){
@@ -149,7 +148,7 @@ public class Deque<Item> implements Iterable<Item>{
 		return new MyIterator();
 	}
 	
-	public class MyIterator implements Iterator<Item> {
+	private class MyIterator implements Iterator<Item> {
 		private Item[] list;
 		private int size;
 		private int i;
@@ -177,13 +176,11 @@ public class Deque<Item> implements Iterable<Item>{
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
 			return size !=  0;
 		}
 
 		@Override
 		public Item next() {
-			// TODO Auto-generated method stub
 			if(!hasNext()){
 				throw new java.util.NoSuchElementException();
 			}
@@ -196,15 +193,14 @@ public class Deque<Item> implements Iterable<Item>{
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub	
 			throw new java.lang.UnsupportedOperationException();
 		}	
 	}
 	
 	// double the capacity of the deque when it is full
 	// copy the original data to the new array
-	public void doubleCapacity() {
-		int newCapacity = capacity * 2;
+	private void doubleCapacity() {
+		int newCapacity = getCapacity() * 2;
 		
 		Item[] newArray = (Item[]) new Object[newCapacity];
 		
@@ -235,15 +231,15 @@ public class Deque<Item> implements Iterable<Item>{
 		deque.addLast(2);
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(3);
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(4);
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.addLast(5);
-		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
+        System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);
 		deque.removeFirst();
-		deque.removeFirst();
-		deque.removeFirst();
-		deque.removeFirst();
+        deque.removeFirst();
+        deque.removeFirst();
+        deque.removeFirst();
 		deque.removeFirst();
 		//deque.removeLast();
 		System.out.println("size:" +  deque.size() + ", front: " + deque.front + ", back: " + deque.back);

@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.*;
 public class Subset {
     private static RandomizedQueue<String> randomizedQueue = new RandomizedQueue<>();
 
-    public static void subset(String[] str, int k) {
+    private static void subset(String[] str, int k) {
         for (int i = 0; i < str.length; i++) {
             randomizedQueue.enqueue(str[i]);
         }

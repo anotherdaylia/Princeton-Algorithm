@@ -30,7 +30,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	private int size;
     private int index; //index of the most recent added element
 	private Item[] queueArray;
-	public final static int DEFAULT_CAPACITY = 4;
+    private final static int DEFAULT_CAPACITY = 4;
 	
 	// construct an empty randomized queue
 	public RandomizedQueue() {
@@ -104,7 +104,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return new MyIterator();
 	}
 
-    public class MyIterator implements Iterator<Item> {
+    private class MyIterator implements Iterator<Item> {
         private Item[] list;
         private int size;
         private int i;
@@ -147,7 +147,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
     }
 
-    public void doubleCapacity() {
+    private void doubleCapacity() {
         int newCapacity = capacity * 2;
         Item[] newArray = (Item[]) new Object[newCapacity];
 
