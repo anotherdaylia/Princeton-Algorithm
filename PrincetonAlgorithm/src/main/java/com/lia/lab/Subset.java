@@ -11,7 +11,7 @@ public class Subset {
             randomizedQueue.enqueue(str[i]);
         }
 
-        for(int i = 0; i < k; i++) {
+        for (int i = 0; i < k; i++) {
             System.out.println(randomizedQueue.dequeue());
         }
     }

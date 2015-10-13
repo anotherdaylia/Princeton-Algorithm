@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdDraw;
 /**
  * Created by liqu on 9/30/15.
  */
-public class Point {
+public class Point implements Comparable<Point>{
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
@@ -53,8 +53,20 @@ public class Point {
      */
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
-        return 0;
-
+        if (that == null) {
+            throw new NullPointerException();
+        }
+        int diffX = that.x - this.x;
+        int diffY = that.y - this.y;
+        if (diffX == 0 && diffY == 0) {
+            return Double.NEGATIVE_INFINITY;
+        } else if (diffX == 0) {
+            return Double.POSITIVE_INFINITY;
+        } else if (diffY == 0) {
+            return 0;
+        } else {
+            return diffY * 1.0 / diffX;
+        }
     }
 
     /**
@@ -71,7 +83,25 @@ public class Point {
      */
     public int compareTo(Point that) {
         /* YOUR CODE HERE */
-        return 0;
+        if (that == null) {
+            throw new NullPointerException();
+        }
+
+        if (y == that.y) {
+            return this.x - that.x;
+        } else {
+            return this.y - that.y;
+        }
+    }
+
+    public static Comparator<Point> pointOrder() {
+        Comparator<Point> com = new Comparator<Point>() {
+            @Override
+            public int compare(Point p1, Point p2) {
+                return p1.compareTo(p2);
+            }
+        };
+        return com;
     }
 
     /**
@@ -82,9 +112,16 @@ public class Point {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
-        return null;
-    }
+        final Point p = this;
+        Comparator<Point> com = new Comparator<Point>() {
+            @Override
+            public int compare(Point p1, Point p2) {
+                return Double.compare(p.slopeTo(p1), p.slopeTo(p2));
+            }
+        };
 
+        return com;
+    }
 
     /**
      * Returns a string representation of this point.
