@@ -1,5 +1,9 @@
 package com.lia.lab;
 
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,6 +16,11 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
+
+        if (points == null) {
+            throw new java.lang.NullPointerException();
+        }
+
         this.points = points;
         this.numberOfSegments = 0;
     }
@@ -23,27 +32,37 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] lineSegments = new LineSegment[1000];
+        LineSegment[] lineSegments = new LineSegment[points.length];
 
-        for (int p1 = 0; p1 < points.length; p1++) {
-            for (int p2 = p1 + 1; p2 < points.length; p2++) {
-                for (int p3 = p2 + 1; p3 < points.length; p3++) {
-                    for (int p4 = p3 + 1; p4 < points.length; p4++) {
+        for (int p = 0; p < points.length; p++) {
+            for (int q = p + 1; q < points.length; q++) {
+                for (int r = q + 1; r < points.length; r++) {
+                    for (int s = r + 1; s < points.length; s++) {
 
-                        Double slope1 = points[p1].slopeTo(points[p2]);
-                        Double slope2 = points[p1].slopeTo(points[p3]);
-                        Double slope3 = points[p1].slopeTo(points[p4]);
+                        Double slope1 = points[p].slopeTo(points[q]);
+                        Double slope2 = points[p].slopeTo(points[r]);
+                        Double slope3 = points[p].slopeTo(points[s]);
+
                         if ((Double.compare(slope1, slope2) == 0)
                                 && (Double.compare(slope1, slope3) == 0)){
-                            ArrayList<Point> p = new ArrayList<>();
-                            p.add(points[p1]);
-                            p.add(points[p2]);
-                            p.add(points[p3]);
-                            p.add(points[p4]);
-                            Collections.sort(p, Point.pointOrder());
-                            LineSegment ls = new LineSegment(p.get(0), p.get(3));
-                            lineSegments[numberOfSegments] = ls;
+
+                            ArrayList<Point> pointList = new ArrayList<>();
+                            pointList.add(points[p]);
+                            pointList.add(points[q]);
+                            pointList.add(points[r]);
+                            pointList.add(points[s]);
+                            Collections.sort(pointList, Point.pointOrder());
+
+                            lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
                             numberOfSegments++;
+
+//                            if (lineSegments == null ){
+//                                lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
+//                            } else {
+//                                numberOfSegments++;
+//                                lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
+//                            }
+
                         }
                     }
                 }

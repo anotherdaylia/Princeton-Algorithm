@@ -1,5 +1,9 @@
 package com.lia.lab;
 
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +17,10 @@ public class FastCollinearPoints {
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
+
+        if (points == null) {
+            throw new java.lang.NullPointerException();
+        }
         this.points = points;
         this.numberOfSegments = 0;
     }
@@ -23,35 +31,38 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] lineSegments = new LineSegment[1000];
+        LineSegment[] lineSegments = new LineSegment[points.length];
 
         for (int p = 0; p < points.length; p++) {
             Arrays.sort(points, points[p].slopeOrder());
 
-            ArrayList<Point> collinearPoints = new ArrayList<>(points.length);
+            ArrayList<Point> pointList = new ArrayList<>(points.length);
 
             for (int q = 0 ; q < points.length; q++) {
                 if (p == q) {
                     continue;
                 }
 
-                if (collinearPoints.isEmpty()) {
-                    collinearPoints.add(points[q]);
+                if (pointList.isEmpty()) {
+                    pointList.add(points[q]);
                 }else if (points[p].slopeTo(points[q - 1]) == points[p].slopeTo(points[q])) {
-                    collinearPoints.add(points[q]);
-                }else if(collinearPoints.size() > 3) {
-                    collinearPoints.add(points[p]);
-                    Collections.sort(collinearPoints);
-                    lineSegments[numberOfSegments] = new LineSegment(collinearPoints.get(0),
-                                                                     collinearPoints.get(collinearPoints.size()-1));
+                    pointList.add(points[q]);
+                }else if(pointList.size() > 3) {
+                    pointList.add(points[p]);
+                    Collections.sort(pointList);
+
+                    LineSegment ls = new LineSegment(pointList.get(0), pointList.get(pointList.size()-1));
+                    lineSegments[numberOfSegments] = ls;
                     numberOfSegments++;
+
                 }else {
-                    collinearPoints.clear();
-                    collinearPoints.add(points[q]);
+                    pointList.clear();
+                    pointList.add(points[q]);
                 }
             }
         }
 
         return lineSegments;
     }
+
 }
