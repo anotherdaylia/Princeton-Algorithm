@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by liqu on 10/1/15.
@@ -32,7 +33,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] lineSegments = new LineSegment[points.length];
+        ArrayList<LineSegment> lineSgmtList = new ArrayList<>();
 
         for (int p = 0; p < points.length; p++) {
             for (int q = p + 1; q < points.length; q++) {
@@ -53,15 +54,8 @@ public class BruteCollinearPoints {
                             pointList.add(points[s]);
                             Collections.sort(pointList, Point.pointOrder());
 
-                            lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
+                            lineSgmtList.add(new LineSegment(pointList.get(0), pointList.get(3)));
                             numberOfSegments++;
-
-//                            if (lineSegments == null ){
-//                                lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
-//                            } else {
-//                                numberOfSegments++;
-//                                lineSegments[numberOfSegments] = new LineSegment(pointList.get(0), pointList.get(3));
-//                            }
 
                         }
                     }
@@ -69,7 +63,10 @@ public class BruteCollinearPoints {
             }
         }
 
-        return lineSegments;
+        LineSegment[] lineSgmtArr = new LineSegment[lineSgmtList.size()];
+        lineSgmtArr = lineSgmtList.toArray(lineSgmtArr);
+
+        return lineSgmtArr;
     }
 
 }
