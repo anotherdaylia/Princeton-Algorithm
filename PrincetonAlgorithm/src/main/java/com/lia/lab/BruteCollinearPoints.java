@@ -4,9 +4,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by liqu on 10/1/15.
@@ -33,7 +31,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        ArrayList<LineSegment> lineSgmtList = new ArrayList<>();
+        HashMap<Double, LineSegment> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
             for (int q = p + 1; q < points.length; q++) {
@@ -54,8 +52,25 @@ public class BruteCollinearPoints {
                             pointList.add(points[s]);
                             Collections.sort(pointList, Point.pointOrder());
 
-                            lineSgmtList.add(new LineSegment(pointList.get(0), pointList.get(3)));
-                            numberOfSegments++;
+                            if (map.containsKey(slope1)) {
+                                Point ls_p = map.get(slope1).getP();
+                                Point ls_q = map.get(slope1).getQ();
+
+                                if (pointList.get(0).compareTo(ls_p) < 0) {
+                                    ls_p = pointList.get(0);
+                                }
+
+                                if (pointList.get(3).compareTo(ls_q) > 0) {
+                                    ls_q = pointList.get(3);
+                                }
+
+                                map.put(slope1, new LineSegment(ls_p, ls_q));
+
+                            } else {
+                                LineSegment ls = new LineSegment(pointList.get(0), pointList.get(3));
+                                map.put(slope1, ls);
+                                numberOfSegments++;
+                            }
 
                         }
                     }
@@ -63,8 +78,8 @@ public class BruteCollinearPoints {
             }
         }
 
-        LineSegment[] lineSgmtArr = new LineSegment[lineSgmtList.size()];
-        lineSgmtArr = lineSgmtList.toArray(lineSgmtArr);
+        LineSegment[] lineSgmtArr = new LineSegment[map.size()];
+        lineSgmtArr = map.values().toArray(lineSgmtArr);
 
         return lineSgmtArr;
     }
