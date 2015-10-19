@@ -31,7 +31,8 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        HashMap<Double, LineSegment> map = new HashMap<>();
+        //HashMap<Double, LineSegment> lsMap = new HashMap<>();
+        HashMap<Double, Point[]> pointMap = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
             for (int q = p + 1; q < points.length; q++) {
@@ -50,11 +51,12 @@ public class BruteCollinearPoints {
                             pointList.add(points[q]);
                             pointList.add(points[r]);
                             pointList.add(points[s]);
-                            Collections.sort(pointList, Point.pointOrder());
+                            //Collections.sort(pointList, Point.pointOrder());
+                            Collections.sort(pointList);
 
-                            if (map.containsKey(slope1)) {
-                                Point ls_p = map.get(slope1).getP();
-                                Point ls_q = map.get(slope1).getQ();
+                            if (pointMap.containsKey(slope1)) {
+                                Point ls_p = pointMap.get(slope1)[0];
+                                Point ls_q = pointMap.get(slope1)[1];
 
                                 if (pointList.get(0).compareTo(ls_p) < 0) {
                                     ls_p = pointList.get(0);
@@ -64,24 +66,40 @@ public class BruteCollinearPoints {
                                     ls_q = pointList.get(3);
                                 }
 
-                                map.put(slope1, new LineSegment(ls_p, ls_q));
+                                Point[] ls = new Point[2];
+                                ls[0] = ls_p;
+                                ls[1] = ls_q;
+                                pointMap.put(slope1, ls);
 
                             } else {
-                                LineSegment ls = new LineSegment(pointList.get(0), pointList.get(3));
-                                map.put(slope1, ls);
+                                Point[] ls = new Point[2];
+                                ls[0] = pointList.get(0);
+                                ls[1] = pointList.get(3);
+                                pointMap.put(slope1, ls);
                                 numberOfSegments++;
                             }
-
                         }
                     }
                 }
             }
         }
 
-        LineSegment[] lineSgmtArr = new LineSegment[map.size()];
-        lineSgmtArr = map.values().toArray(lineSgmtArr);
+        ArrayList<LineSegment> lsList = new ArrayList<>();
+
+        Iterator it = pointMap.keySet().iterator();
+        while(it.hasNext()) {
+            Point[] pointPair = pointMap.get(it.next());
+            LineSegment ls = new LineSegment(pointPair[0], pointPair[1]);
+
+            lsList.add(ls);
+        }
+
+        LineSegment[] lineSgmtArr = new LineSegment[lsList.size()];
+        lineSgmtArr = lsList.toArray(lineSgmtArr);
 
         return lineSgmtArr;
     }
+
+
 
 }

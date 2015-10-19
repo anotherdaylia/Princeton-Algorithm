@@ -94,16 +94,6 @@ public class Point implements Comparable<Point>{
         }
     }
 
-    public static Comparator<Point> pointOrder() {
-        Comparator<Point> com = new Comparator<Point>() {
-            @Override
-            public int compare(Point p1, Point p2) {
-                return p1.compareTo(p2);
-            }
-        };
-        return com;
-    }
-
     /**
      * Compares two points by the slope they make with this point.
      * The slope is defined as in the slopeTo() method.

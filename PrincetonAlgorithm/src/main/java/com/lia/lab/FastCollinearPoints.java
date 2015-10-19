@@ -29,7 +29,8 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        HashMap<Double, LineSegment> map = new HashMap<>();
+        //HashMap<Double, LineSegment> map = new HashMap<>();
+        HashMap<Double, Point[]> pointMap = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
             Arrays.sort(points, points[p].slopeOrder());
@@ -46,7 +47,7 @@ public class FastCollinearPoints {
                 }else if (points[p].slopeTo(points[q - 1]) == points[p].slopeTo(points[q])) {
                     pointList.add(points[q]);
                 }else if(pointList.size() > 2) {
-                    check(pointList, p, map);
+                    check(pointList, p, pointMap);
 
                     pointList.clear();
                     pointList.add(points[q]);
@@ -58,27 +59,38 @@ public class FastCollinearPoints {
             }
 
             if (pointList.size() > 2) {
-                check(pointList, p, map);
+                check(pointList, p, pointMap);
             }
 
         }
 
-        LineSegment[] lineSgmtArr = new LineSegment[map.size()];
-        lineSgmtArr = map.values().toArray(lineSgmtArr);
+        ArrayList<LineSegment> lsList = new ArrayList<>();
+
+        Iterator it = pointMap.keySet().iterator();
+        while(it.hasNext()) {
+            Point[] pointPair = pointMap.get(it.next());
+            LineSegment ls = new LineSegment(pointPair[0], pointPair[1]);
+
+            lsList.add(ls);
+        }
+
+        LineSegment[] lineSgmtArr = new LineSegment[lsList.size()];
+        lineSgmtArr = lsList.toArray(lineSgmtArr);
 
         return lineSgmtArr;
     }
 
 
-    private void check(ArrayList<Point> pointList, int p, HashMap<Double, LineSegment> map) {
+    private void check(ArrayList<Point> pointList, int p, HashMap<Double, Point[]> pointMap) {
         pointList.add(points[p]);
-        Collections.sort(pointList, Point.pointOrder());
+        //Collections.sort(pointList, Point.pointOrder());
+        Collections.sort(pointList);
 
         Double slope = pointList.get(0).slopeTo(pointList.get(pointList.size()-1));
 
-        if (map.containsKey(slope)) {
-            Point ls_p = map.get(slope).getP();
-            Point ls_q = map.get(slope).getQ();
+        if (pointMap.containsKey(slope)) {
+            Point ls_p = pointMap.get(slope)[0];
+            Point ls_q = pointMap.get(slope)[1];
 
             if (pointList.get(0).compareTo(ls_p) < 0) {
                 ls_p = pointList.get(0);
@@ -88,11 +100,16 @@ public class FastCollinearPoints {
                 ls_q = pointList.get(pointList.size()-1);
             }
 
-            map.put(slope, new LineSegment(ls_p, ls_q));
+            Point[] ls = new Point[2];
+            ls[0] = ls_p;
+            ls[1] = ls_q;
+            pointMap.put(slope, ls);
 
         } else {
-            LineSegment ls = new LineSegment(pointList.get(0), pointList.get(pointList.size()-1));
-            map.put(slope, ls);
+            Point[] ls = new Point[2];
+            ls[0] = pointList.get(0);
+            ls[1] = pointList.get(3);
+            pointMap.put(slope, ls);
             numberOfSegments++;
         }
     }
