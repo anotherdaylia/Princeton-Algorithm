@@ -48,7 +48,7 @@ public class CollinearClientTest {
 
         System.out.println("FastCollinearPoints Test");
         // read the N points from a file
-        In in = new In("src/test/resources/input6.txt");
+        In in = new In("src/test/resources/input2b.txt");
         int N = in.readInt();
         Point[] points = new Point[N];
         for (int i = 0; i < N; i++) {

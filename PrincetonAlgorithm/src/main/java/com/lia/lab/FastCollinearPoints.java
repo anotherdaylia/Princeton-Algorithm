@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class FastCollinearPoints {
     private Point[] points;
+    private Point[] pointsCopy;
     private int numberOfSegments = 0;
 
     // finds all line segments containing 4 or more points
@@ -29,31 +30,50 @@ public class FastCollinearPoints {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
-            Arrays.sort(points, points[p].slopeOrder());
+            pointsCopy = new Point[points.length];
+            for (int i = 0; i < points.length; i++) {
+                pointsCopy[i] = points[i];
+            }
+            Arrays.sort(pointsCopy, points[p].slopeOrder());
             ArrayList<Point> collinear = new ArrayList<>(points.length);
 
-            for (int q = 0 ; q < points.length; q++) {
+            for (int q = 0 ; q < pointsCopy.length; q++) {
                 if (p == q) { continue; }
+                //if (points[p].compareTo(pointsCopy[q]) == 0) { continue; }
 
                 if (collinear.isEmpty()) {
-                    collinear.add(points[q]);
+                    //System.out.println("Empty Added" + pointsCopy[q]);
+                    collinear.add(pointsCopy[q]);
 
-                }else if (points[p].slopeTo(points[q - 1]) == points[p].slopeTo(points[q])) {
-                    collinear.add(points[q]);
+                }else if (points[p].slopeTo(pointsCopy[q - 1]) == points[p].slopeTo(pointsCopy[q])) {
+                    //System.out.println("Equal Added" + pointsCopy[q]);
+                    collinear.add(pointsCopy[q]);
 
-                }else if(collinear.size() > 2) {
+                } else if(collinear.size() > 2) {
+                    System.out.println(points[p]);
+                    for (Point cp: collinear) {
+                        System.out.println(cp);
+                    }
+                    System.out.println();
+
                     checkOverlap(collinear, p, map);
 
                     collinear.clear();
-                    collinear.add(points[q]);
+                    collinear.add(pointsCopy[q]);
 
                 }else {
                     collinear.clear();
-                    collinear.add(points[q]);
+                    collinear.add(pointsCopy[q]);
                 }
             }
 
             if (collinear.size() > 2) {
+                System.out.println(points[p]);
+                for (Point cp: collinear) {
+                    System.out.println(cp);
+                }
+                System.out.println();
+
                 checkOverlap(collinear, p, map);
             }
 
