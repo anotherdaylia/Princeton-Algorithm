@@ -1,9 +1,5 @@
 package com.lia.lab;
 
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
-
 import java.util.*;
 
 /**
@@ -29,49 +25,51 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        //HashMap<Double, LineSegment> map = new HashMap<>();
         HashMap<Double, Point[]> pointMap = new HashMap<>();
+        HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
             Arrays.sort(points, points[p].slopeOrder());
-
-            ArrayList<Point> pointList = new ArrayList<>(points.length);
+            ArrayList<Point> collinear = new ArrayList<>(points.length);
 
             for (int q = 0 ; q < points.length; q++) {
-                if (p == q) {
-                    continue;
-                }
+                if (p == q) { continue; }
 
-                if (pointList.isEmpty()) {
-                    pointList.add(points[q]);
+                if (collinear.isEmpty()) {
+                    collinear.add(points[q]);
+
                 }else if (points[p].slopeTo(points[q - 1]) == points[p].slopeTo(points[q])) {
-                    pointList.add(points[q]);
-                }else if(pointList.size() > 2) {
-                    check(pointList, p, pointMap);
+                    collinear.add(points[q]);
 
-                    pointList.clear();
-                    pointList.add(points[q]);
+                }else if(collinear.size() > 2) {
+                    checkOverlap(collinear, p, map);
+
+                    collinear.clear();
+                    collinear.add(points[q]);
 
                 }else {
-                    pointList.clear();
-                    pointList.add(points[q]);
+                    collinear.clear();
+                    collinear.add(points[q]);
                 }
             }
 
-            if (pointList.size() > 2) {
-                check(pointList, p, pointMap);
+            if (collinear.size() > 2) {
+                checkOverlap(collinear, p, map);
             }
 
         }
 
         ArrayList<LineSegment> lsList = new ArrayList<>();
 
-        Iterator it = pointMap.keySet().iterator();
-        while(it.hasNext()) {
-            Point[] pointPair = pointMap.get(it.next());
-            LineSegment ls = new LineSegment(pointPair[0], pointPair[1]);
-
-            lsList.add(ls);
+        Iterator it_map = map.keySet().iterator();
+        while(it_map.hasNext()) {
+            ArrayList<Point[]> linesgmtList = map.get(it_map.next());
+            Iterator it_list = linesgmtList.iterator();
+            while (it_list.hasNext()) {
+                Point[] pointPair = (Point[]) it_list.next();
+                LineSegment ls = new LineSegment(pointPair[0], pointPair[1]);
+                lsList.add(ls);
+            }
         }
 
         LineSegment[] lineSgmtArr = new LineSegment[lsList.size()];
@@ -80,36 +78,72 @@ public class FastCollinearPoints {
         return lineSgmtArr;
     }
 
+    private void checkOverlap(ArrayList<Point> collinear, int p, HashMap<Double, ArrayList<Point[]>> map) {
+        collinear.add(points[p]);
+        Collections.sort(collinear);
 
-    private void check(ArrayList<Point> pointList, int p, HashMap<Double, Point[]> pointMap) {
-        pointList.add(points[p]);
-        //Collections.sort(pointList, Point.pointOrder());
-        Collections.sort(pointList);
+        Double slope = collinear.get(0).slopeTo(collinear.get(collinear.size()-1));
 
-        Double slope = pointList.get(0).slopeTo(pointList.get(pointList.size()-1));
+        if (map.containsKey(slope)) {
+            ArrayList<Point[]> linesgmtList = map.get(slope);
+            int count = 0; // track the number of linesegment have gone through in linesgmtList
+            int index = Integer.MAX_VALUE; // track the linesegment needs update
 
-        if (pointMap.containsKey(slope)) {
-            Point ls_p = pointMap.get(slope)[0];
-            Point ls_q = pointMap.get(slope)[1];
+            for (Point[] pointPair : linesgmtList) {
+                Point ls_p = pointPair[0];
 
-            if (pointList.get(0).compareTo(ls_p) < 0) {
-                ls_p = pointList.get(0);
+                // check if points on the collinear is on the existing collier
+                if (ls_p.slopeTo(collinear.get(0)) != slope
+                        && ls_p.slopeTo(collinear.get(0)) != Double.NEGATIVE_INFINITY) {
+                    count++;
+                    if (count < linesgmtList.size()) {
+                        continue;
+                    } else {
+                        index = linesgmtList.indexOf(pointPair);
+                        break;
+                    }
+                } else {
+                    index = linesgmtList.indexOf(pointPair);
+                    break;
+                }
             }
 
-            if (pointList.get(pointList.size()-1).compareTo(ls_q) > 0) {
-                ls_q = pointList.get(pointList.size()-1);
+            // the collinear does not overlap w/ existing coliinears, add to list directly
+            if (count >= linesgmtList.size() && index != Integer.MAX_VALUE) {
+                Point[] pointPair = new Point[2];
+                pointPair[0] = collinear.get(0);
+                pointPair[1] = collinear.get(collinear.size()-1);
+                linesgmtList.add(pointPair);
+                map.put(slope, linesgmtList);
+                numberOfSegments++;
             }
 
-            Point[] ls = new Point[2];
-            ls[0] = ls_p;
-            ls[1] = ls_q;
-            pointMap.put(slope, ls);
+            // the collinear has overlap w. existing collinears, update linesegment
+            if (count < linesgmtList.size() && index != Integer.MAX_VALUE) {
+                Point[] pointPair = linesgmtList.get(index);
+                Point ls_p = pointPair[0];
+                Point ls_q = pointPair[1];
 
-        } else {
-            Point[] ls = new Point[2];
-            ls[0] = pointList.get(0);
-            ls[1] = pointList.get(3);
-            pointMap.put(slope, ls);
+                if (collinear.get(0).compareTo(ls_p) < 0 || collinear.get(3).compareTo(ls_q) > 0) {
+                    ls_p = collinear.get(0);
+                    ls_q = collinear.get(collinear.size()-1);
+
+                    Point[] ls = new Point[2];
+                    ls[0] = ls_p;
+                    ls[1] = ls_q;
+
+                    linesgmtList.set(index, ls);
+                    map.put(slope, linesgmtList);
+                }
+            }
+
+        } else { // if map does not contain the slope of collinear, add the collinear
+            Point[] pointPair = new Point[2];
+            pointPair[0] = collinear.get(0);
+            pointPair[1] = collinear.get(collinear.size()-1);
+            ArrayList<Point[]> linesgmtList = new ArrayList<>();
+            linesgmtList.add(pointPair);
+            map.put(slope, linesgmtList);
             numberOfSegments++;
         }
     }

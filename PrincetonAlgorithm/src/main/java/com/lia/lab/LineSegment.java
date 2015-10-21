@@ -30,14 +30,6 @@ public class LineSegment {
         this.p = p;
         this.q = q;
     }
-
-    public Point getP() {
-        return p;
-    }
-
-    public Point getQ() {
-        return q;
-    }
     
     /**
      * Draws this line segment to standard draw.

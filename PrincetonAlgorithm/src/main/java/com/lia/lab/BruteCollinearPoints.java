@@ -26,7 +26,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        HashMap<Double, ArrayList<Point[]>> pointMap = new HashMap<>();
+        HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
             for (int q = p + 1; q < points.length; q++) {
@@ -47,8 +47,8 @@ public class BruteCollinearPoints {
                             Collections.sort(collinear);
 
                             // check if the new collinear overlap with existing collinears
-                            if (pointMap.containsKey(slope1)) {
-                                ArrayList<Point[]> linesgmtList = pointMap.get(slope1);
+                            if (map.containsKey(slope1)) {
+                                ArrayList<Point[]> linesgmtList = map.get(slope1);
                                 int count = 0; // track the number of linesegment have gone through in linesgmtList
                                 int index = Integer.MAX_VALUE; // track the linesegment needs update
 
@@ -75,9 +75,9 @@ public class BruteCollinearPoints {
                                 if (count >= linesgmtList.size() && index != Integer.MAX_VALUE) {
                                     Point[] pointPair = new Point[2];
                                     pointPair[0] = collinear.get(0);
-                                    pointPair[1] = collinear.get(3);
+                                    pointPair[1] = collinear.get(collinear.size()-1);
                                     linesgmtList.add(pointPair);
-                                    pointMap.put(slope1, linesgmtList);
+                                    map.put(slope1, linesgmtList);
                                     numberOfSegments++;
                                 }
 
@@ -89,24 +89,24 @@ public class BruteCollinearPoints {
 
                                     if (collinear.get(0).compareTo(ls_p) < 0 || collinear.get(3).compareTo(ls_q) > 0) {
                                         ls_p = collinear.get(0);
-                                        ls_q = collinear.get(3);
+                                        ls_q = collinear.get(collinear.size()-1);
 
                                         Point[] ls = new Point[2];
                                         ls[0] = ls_p;
                                         ls[1] = ls_q;
 
                                         linesgmtList.set(index, ls);
-                                        pointMap.put(slope1, linesgmtList);
+                                        map.put(slope1, linesgmtList);
                                     }
                                 }
 
-                            } else { // if pointMap does not contain the slope of collinear, add the collinear
+                            } else { // if map does not contain the slope of collinear, add the collinear
                                 Point[] pointPair = new Point[2];
                                 pointPair[0] = collinear.get(0);
-                                pointPair[1] = collinear.get(3);
+                                pointPair[1] = collinear.get(collinear.size()-1);
                                 ArrayList<Point[]> linesgmtList = new ArrayList<>();
                                 linesgmtList.add(pointPair);
-                                pointMap.put(slope1, linesgmtList);
+                                map.put(slope1, linesgmtList);
                                 numberOfSegments++;
                             }
                         }
@@ -117,9 +117,9 @@ public class BruteCollinearPoints {
 
         ArrayList<LineSegment> lsList = new ArrayList<>();
 
-        Iterator it_map = pointMap.keySet().iterator();
+        Iterator it_map = map.keySet().iterator();
         while(it_map.hasNext()) {
-            ArrayList<Point[]> linesgmtList = pointMap.get(it_map.next());
+            ArrayList<Point[]> linesgmtList = map.get(it_map.next());
             Iterator it_list = linesgmtList.iterator();
             while (it_list.hasNext()) {
                 Point[] pointPair = (Point[]) it_list.next();
