@@ -35,11 +35,17 @@ public class FastCollinearPoints {
                 pointsCopy[i] = points[i];
             }
             Arrays.sort(pointsCopy, points[p].slopeOrder());
+//            if (points[p].compareTo(new Point(2419, 14586)) == 0) {
+//                System.out.print("P is " + points[p] + "\n\t");
+//                for (Point ap: pointsCopy) {
+//                    System.out.print(ap + " ");
+//                }
+//                System.out.println();
+//            }
             ArrayList<Point> collinear = new ArrayList<>(points.length);
 
             for (int q = 0 ; q < pointsCopy.length; q++) {
-                if (p == q) { continue; }
-                //if (points[p].compareTo(pointsCopy[q]) == 0) { continue; }
+                if (points[p].compareTo(pointsCopy[q]) == 0) { continue; }
 
                 if (collinear.isEmpty()) {
                     //System.out.println("Empty Added" + pointsCopy[q]);
