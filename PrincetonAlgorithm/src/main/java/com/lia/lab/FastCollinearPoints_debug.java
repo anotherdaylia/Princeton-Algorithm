@@ -5,15 +5,15 @@ import java.util.*;
 /**
  * Created by liqu on 10/3/15.
  */
-public class FastCollinearPoints {
+public class FastCollinearPoints_debug {
     private Point[] points;
     private Point[] pointsCopy;
     private int numberOfSegments = 0;
 
     // finds all line segments containing 4 or more points
-    public FastCollinearPoints(Point[] points) {
+    public FastCollinearPoints_debug(Point[] points) {
         if (points == null) {
-            throw new java.lang.NullPointerException();
+            throw new NullPointerException();
         }
         this.points = points;
         this.numberOfSegments = 0;
@@ -39,14 +39,19 @@ public class FastCollinearPoints {
                 if (points[p].compareTo(pointsCopy[q]) == 0) { continue; }
 
                 if (collinear.isEmpty()) {
+                    //System.out.println("Empty Added" + pointsCopy[q]);
                     collinear.add(pointsCopy[q]);
-                } else if (points[p].slopeTo(pointsCopy[q - 1]) == points[p].slopeTo(pointsCopy[q])) {
+
+                }else if (points[p].slopeTo(pointsCopy[q - 1]) == points[p].slopeTo(pointsCopy[q])) {
+                    //System.out.println("Equal Added" + pointsCopy[q]);
                     collinear.add(pointsCopy[q]);
+
                 } else if(collinear.size() > 2) {
                     checkOverlap(collinear, p, map);
                     collinear.clear();
                     collinear.add(pointsCopy[q]);
-                } else {
+
+                }else {
                     collinear.clear();
                     collinear.add(pointsCopy[q]);
                 }
@@ -58,10 +63,6 @@ public class FastCollinearPoints {
 
         }
 
-        return convertToArr(map);
-    }
-
-    private LineSegment[] convertToArr(HashMap<Double, Set<Point[]>> map) {
         ArrayList<LineSegment> lsList = new ArrayList<>();
 
         Iterator it_map = map.keySet().iterator();
@@ -84,6 +85,7 @@ public class FastCollinearPoints {
     private void checkOverlap(ArrayList<Point> collinear, int p, HashMap<Double, Set<Point[]>> map) {
         collinear.add(points[p]);
         Collections.sort(collinear);
+
         Double slope = collinear.get(0).slopeTo(collinear.get(collinear.size()-1));
 
         if (map.containsKey(slope)) {
@@ -91,65 +93,107 @@ public class FastCollinearPoints {
             int count = 0; // track the number of linesegment have gone through in linesgmtSet
             Point[] p_ix = new Point[2]; // track the linesegment need update
 
-            for (Point[] line : linesgmtSet) {
-                Point ls_p = line[0];
+            for (Point[] pointPair : linesgmtSet) {
+                Point ls_p = pointPair[0];
 
                 // check if points on the collinear is on the existing collier
                 if (ls_p.slopeTo(collinear.get(0)) == slope || ls_p.compareTo(collinear.get(0)) == 0) { // Overlap
-                    p_ix = line;
+                    System.out.println("  Overlap: ");
+                    System.out.println("    P is " + ls_p);
+                    System.out.println("    Collinear are " + collinear.get(0) + ", " + collinear.get(3));
+
+                    p_ix = pointPair;
                     break;
+
                 } else { // Not overlap
+                    //System.out.println("Compare 1st point = " + ls_p + " 2nd point = " + collinear.get(0));
                     count++;
                     if (count < linesgmtSet.size()) {
                         continue;
                     } else {
+                        System.out.println("  Not overlap: ");
+                        System.out.println("    P is " + ls_p);
+                        System.out.println("    Collinear are " + collinear.get(0) + ", " + collinear.get(3));
+                        //p_ix = pointPair;
                         break;
                     }
                 }
             }
 
+            System.out.println("count: " + count + "  linesgmtSet.size: " + linesgmtSet.size());
             // the collinear does not overlap w/ existing coliinears, add to list directly
             if (count < linesgmtSet.size() && p_ix != null) {
-                Point[] line = p_ix;
-                Point line_p = line[0];
-                Point line_q = line[1];
+                System.out.println("Find same slope and Overlap, update points");
+                Point[] pointPair = p_ix;
+                Point ls_p = pointPair[0];
+                Point ls_q = pointPair[1];
 
-                if (collinear.get(0).compareTo(line_p) < 0 || collinear.get(collinear.size()-1).compareTo(line_q) > 0) {
-                    line_p = collinear.get(0);
-                    line_q = collinear.get(collinear.size()-1);
+                if (collinear.get(0).compareTo(ls_p) < 0 || collinear.get(collinear.size()-1).compareTo(ls_q) > 0) {
+                    System.out.println("  before updating: " + ls_p + " " + ls_q);
+                    ls_p = collinear.get(0);
+                    ls_q = collinear.get(collinear.size()-1);
 
-                    Point[] newline = new Point[2];
-                    newline[0] = line_p;
-                    newline[1] = line_q;
+                    Point[] ls = new Point[2];
+                    ls[0] = ls_p;
+                    ls[1] = ls_q;
+                    System.out.println("  after updating: " + ls[0] + " " + ls[1]);
                     linesgmtSet.remove(p_ix);
-                    linesgmtSet.add(newline);
+                    linesgmtSet.add(ls);
                     map.put(slope, linesgmtSet);
+
+                    System.out.println("  LinesigmentSet elements: ");
+                    Iterator it = linesgmtSet.iterator();
+                    while(it.hasNext()) {
+                        Point[] p_tmp = (Point[])it.next();
+                        System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
+                    }
                 }
             }
+
+            System.out.println("count: " + count + "  linesgmtSet.size: " + linesgmtSet.size());
 
             /* Bug fixed:
             this block of code have to be placed in the last, b/c after adding more linesegment
             the size of the set will be changed */
-            // the collinear has overlap w. existing collinears, update linesegment
             if (count >= linesgmtSet.size() && p_ix != null) {
-                Point[] newline = new Point[2];
-                newline[0] = collinear.get(0);
-                newline[1] = collinear.get(collinear.size()-1);
+                System.out.println("Find same slope but Not overlap, add directly");
+                Point[] pointPair = new Point[2];
+                pointPair[0] = collinear.get(0);
+                pointPair[1] = collinear.get(collinear.size()-1);
 
-                linesgmtSet.add(newline);
+                System.out.println("    adding: " + pointPair[0] + " " + pointPair[1]);
+                linesgmtSet.add(pointPair);
                 map.put(slope, linesgmtSet);
                 numberOfSegments++;
+
+                System.out.println("  LinesigmentSet elements: ");
+                Iterator it = linesgmtSet.iterator();
+                while(it.hasNext()) {
+                    Point[] p_tmp = (Point[])it.next();
+                    System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
+                }
             }
+            // the collinear has overlap w. existing collinears, update linesegment
+
 
         } else { // if map does not contain the slope of collinear, add the collinear
-            Point[] newline = new Point[2];
-            newline[0] = collinear.get(0);
-            newline[1] = collinear.get(collinear.size()-1);
+            System.out.println("No existing slope, add directly");
+            Point[] pointPair = new Point[2];
+            pointPair[0] = collinear.get(0);
+            pointPair[1] = collinear.get(collinear.size()-1);
 
             Set<Point[]> linesgmtSet = new HashSet<>();
-            linesgmtSet.add(newline);
+            linesgmtSet.add(pointPair);
+            System.out.println("    adding: " + pointPair[0] + " " + pointPair[1]);
             map.put(slope, linesgmtSet);
             numberOfSegments++;
+
+            System.out.println("  LinesigmentSet elements: ");
+            Iterator it = linesgmtSet.iterator();
+            while(it.hasNext()) {
+                Point[] p_tmp = (Point[])it.next();
+                System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
+            }
         }
     }
 

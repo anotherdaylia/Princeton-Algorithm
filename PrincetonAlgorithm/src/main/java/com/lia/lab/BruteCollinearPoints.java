@@ -117,6 +117,10 @@ public class BruteCollinearPoints {
             }
         }
 
+        return convertToArr(map);
+    }
+
+    private LineSegment[] convertToArr (HashMap<Double, ArrayList<Point[]>> map) {
         ArrayList<LineSegment> lsList = new ArrayList<>();
 
         Iterator it_map = map.keySet().iterator();
