@@ -97,48 +97,31 @@ public class FastCollinearPoints {
                 Point ls_p = pointPair[0];
 
                 // check if points on the collinear is on the existing collier
-                if (ls_p.slopeTo(collinear.get(0)) == slope || ls_p.compareTo(collinear.get(0)) == 0) {
-
-                    if (ls_p.compareTo(new Point(1227, 14586)) == 0 && collinear.get(0).compareTo(new Point(1227, 14586)) == 0) {
-                        System.out.println("P is " + ls_p);
-                    }
+                if (ls_p.slopeTo(collinear.get(0)) == slope || ls_p.compareTo(collinear.get(0)) == 0) { // Overlap
+                    System.out.println("  Overlap: ");
+                    System.out.println("    P is " + ls_p);
+                    System.out.println("    Collinear are " + collinear.get(0) + ", " + collinear.get(3));
 
                     p_ix = pointPair;
                     break;
-                } else {
 
+                } else { // Not overlap
                     //System.out.println("Compare 1st point = " + ls_p + " 2nd point = " + collinear.get(0));
                     count++;
                     if (count < linesgmtSet.size()) {
                         continue;
                     } else {
-                        p_ix = pointPair;
+                        System.out.println("  Not overlap: ");
+                        System.out.println("    P is " + ls_p);
+                        System.out.println("    Collinear are " + collinear.get(0) + ", " + collinear.get(3));
+                        //p_ix = pointPair;
                         break;
                     }
                 }
             }
 
+            System.out.println("count: " + count + "  linesgmtSet.size: " + linesgmtSet.size());
             // the collinear does not overlap w/ existing coliinears, add to list directly
-            if (count >= linesgmtSet.size() && p_ix != null) {
-                System.out.println("Find same slope but Not overlap, add directly");
-                Point[] pointPair = new Point[2];
-                pointPair[0] = collinear.get(0);
-                pointPair[1] = collinear.get(collinear.size()-1);
-
-                System.out.println("    adding: " + pointPair[0] + " " + pointPair[1]);
-                linesgmtSet.add(pointPair);
-                map.put(slope, linesgmtSet);
-                numberOfSegments++;
-
-                System.out.println("  LinesigmentSet elements: ");
-                Iterator it = linesgmtSet.iterator();
-                while(it.hasNext()) {
-                    Point[] p_tmp = (Point[])it.next();
-                    System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
-                }
-            }
-
-            // the collinear has overlap w. existing collinears, update linesegment
             if (count < linesgmtSet.size() && p_ix != null) {
                 System.out.println("Find same slope and Overlap, update points");
                 Point[] pointPair = p_ix;
@@ -157,8 +140,41 @@ public class FastCollinearPoints {
                     linesgmtSet.remove(p_ix);
                     linesgmtSet.add(ls);
                     map.put(slope, linesgmtSet);
+
+                    System.out.println("  LinesigmentSet elements: ");
+                    Iterator it = linesgmtSet.iterator();
+                    while(it.hasNext()) {
+                        Point[] p_tmp = (Point[])it.next();
+                        System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
+                    }
                 }
             }
+
+            System.out.println("count: " + count + "  linesgmtSet.size: " + linesgmtSet.size());
+
+            /* Bug fixed:
+            this block of code have to be placed in the last, b/c after adding more linesegment
+            the size of the set will be changed */
+            if (count >= linesgmtSet.size() && p_ix != null) {
+                System.out.println("Find same slope but Not overlap, add directly");
+                Point[] pointPair = new Point[2];
+                pointPair[0] = collinear.get(0);
+                pointPair[1] = collinear.get(collinear.size()-1);
+
+                System.out.println("    adding: " + pointPair[0] + " " + pointPair[1]);
+                linesgmtSet.add(pointPair);
+                map.put(slope, linesgmtSet);
+                numberOfSegments++;
+
+                System.out.println("  LinesigmentSet elements: ");
+                Iterator it = linesgmtSet.iterator();
+                while(it.hasNext()) {
+                    Point[] p_tmp = (Point[])it.next();
+                    System.out.println("  " + p_tmp[0].toString() + ", " + p_tmp[1].toString());
+                }
+            }
+            // the collinear has overlap w. existing collinears, update linesegment
+
 
         } else { // if map does not contain the slope of collinear, add the collinear
             System.out.println("No existing slope, add directly");

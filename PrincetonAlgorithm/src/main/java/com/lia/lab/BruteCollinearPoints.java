@@ -14,7 +14,6 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
 
         if (points == null) {throw new java.lang.NullPointerException();}
-
         this.points = points;
         this.numberOfSegments = 0;
     }
@@ -71,16 +70,6 @@ public class BruteCollinearPoints {
                                     }
                                 }
 
-                                // the collinear does not overlap w/ existing coliinears, add to list directly
-                                if (count >= linesgmtList.size() && index != Integer.MAX_VALUE) {
-                                    Point[] pointPair = new Point[2];
-                                    pointPair[0] = collinear.get(0);
-                                    pointPair[1] = collinear.get(collinear.size()-1);
-                                    linesgmtList.add(pointPair);
-                                    map.put(slope1, linesgmtList);
-                                    numberOfSegments++;
-                                }
-
                                 // the collinear has overlap w. existing collinears, update linesegment
                                 if (count < linesgmtList.size() && index != Integer.MAX_VALUE) {
                                     Point[] pointPair = linesgmtList.get(index);
@@ -98,6 +87,19 @@ public class BruteCollinearPoints {
                                         linesgmtList.set(index, ls);
                                         map.put(slope1, linesgmtList);
                                     }
+                                }
+
+                                // the collinear does not overlap w/ existing collinear, add to list directly
+                                /* Bug fixed:
+                                this block of code have to be placed in the last, b/c after adding more linesegments
+                                the size of the arraylist will be changed */
+                                if (count >= linesgmtList.size() && index != Integer.MAX_VALUE) {
+                                    Point[] pointPair = new Point[2];
+                                    pointPair[0] = collinear.get(0);
+                                    pointPair[1] = collinear.get(collinear.size()-1);
+                                    linesgmtList.add(pointPair);
+                                    map.put(slope1, linesgmtList);
+                                    numberOfSegments++;
                                 }
 
                             } else { // if map does not contain the slope of collinear, add the collinear
@@ -133,7 +135,5 @@ public class BruteCollinearPoints {
 
         return lineSgmtArr;
     }
-
-
 
 }
