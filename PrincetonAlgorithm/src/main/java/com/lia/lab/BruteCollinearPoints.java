@@ -8,14 +8,27 @@ import java.util.*;
  */
 public class BruteCollinearPoints {
     private Point[] points;
+    private Point[] pointsCopy;
     private int numberOfSegments;
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
-
         if (points == null) {throw new java.lang.NullPointerException();}
         this.points = points;
         this.numberOfSegments = 0;
+
+        // throws an exception if duplicate points
+        this.pointsCopy = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            pointsCopy[i] = points[i];
+        }
+
+        Arrays.sort(pointsCopy);
+        for (int i = 1; i < pointsCopy.length; i++) {
+            if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
+                throw new java.lang.IllegalArgumentException();
+            }
+        }
     }
 
     // the number of line segments
@@ -78,7 +91,7 @@ public class BruteCollinearPoints {
 
                                     if (collinear.get(0).compareTo(ls_p) < 0 || collinear.get(3).compareTo(ls_q) > 0) {
                                         ls_p = collinear.get(0);
-                                        ls_q = collinear.get(collinear.size()-1);
+                                        ls_q = collinear.get(3);
 
                                         Point[] ls = new Point[2];
                                         ls[0] = ls_p;

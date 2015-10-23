@@ -1,5 +1,6 @@
 package com.lia.lab;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -12,11 +13,22 @@ public class FastCollinearPoints {
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
-        if (points == null) {
-            throw new java.lang.NullPointerException();
-        }
+        if (points == null) { throw new java.lang.NullPointerException(); }
         this.points = points;
         this.numberOfSegments = 0;
+
+        // throws an exception if duplicate points
+        this.pointsCopy = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            pointsCopy[i] = points[i];
+        }
+
+        Arrays.sort(pointsCopy);
+        for (int i = 1; i < pointsCopy.length; i++) {
+            if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
+                throw new java.lang.IllegalArgumentException();
+            }
+        }
     }
 
     // the number of line segments
@@ -24,13 +36,10 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        HashMap<Double, Set<Point[]>> map = new HashMap<>();
+        HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
-            pointsCopy = new Point[points.length];
-            for (int i = 0; i < points.length; i++) {
-                pointsCopy[i] = points[i];
-            }
+
             Arrays.sort(pointsCopy, points[p].slopeOrder());
 
             ArrayList<Point> collinear = new ArrayList<>(points.length);
@@ -61,15 +70,15 @@ public class FastCollinearPoints {
         return convertToArr(map);
     }
 
-    private LineSegment[] convertToArr(HashMap<Double, Set<Point[]>> map) {
+    private LineSegment[] convertToArr(HashMap<Double, ArrayList<Point[]>> map) {
         ArrayList<LineSegment> lsList = new ArrayList<>();
 
         Iterator it_map = map.keySet().iterator();
         while(it_map.hasNext()) {
-            Set<Point[]> linesgmtSet = map.get(it_map.next());
-            Iterator it_set = linesgmtSet.iterator();
-            while (it_set.hasNext()) {
-                Point[] pointPair = (Point[]) it_set.next();
+            ArrayList<Point[]> linesgmtList = map.get(it_map.next());
+            Iterator it_list = linesgmtList.iterator();
+            while (it_list.hasNext()) {
+                Point[] pointPair = (Point[]) it_list.next();
                 LineSegment ls = new LineSegment(pointPair[0], pointPair[1]);
                 lsList.add(ls);
             }
@@ -81,17 +90,17 @@ public class FastCollinearPoints {
         return lineSgmtArr;
     }
 
-    private void checkOverlap(ArrayList<Point> collinear, int p, HashMap<Double, Set<Point[]>> map) {
+    private void checkOverlap(ArrayList<Point> collinear, int p, HashMap<Double, ArrayList<Point[]>> map) {
         collinear.add(points[p]);
         Collections.sort(collinear);
         Double slope = collinear.get(0).slopeTo(collinear.get(collinear.size()-1));
 
         if (map.containsKey(slope)) {
-            Set<Point[]> linesgmtSet = map.get(slope);
-            int count = 0; // track the number of linesegment have gone through in linesgmtSet
+            ArrayList<Point[]> linesgmtList = map.get(slope);
+            int count = 0; // track the number of linesegment have gone through in linesgmtList
             Point[] p_ix = new Point[2]; // track the linesegment need update
 
-            for (Point[] line : linesgmtSet) {
+            for (Point[] line : linesgmtList) {
                 Point ls_p = line[0];
 
                 // check if points on the collinear is on the existing collier
@@ -100,7 +109,7 @@ public class FastCollinearPoints {
                     break;
                 } else { // Not overlap
                     count++;
-                    if (count < linesgmtSet.size()) {
+                    if (count < linesgmtList.size()) {
                         continue;
                     } else {
                         break;
@@ -109,21 +118,21 @@ public class FastCollinearPoints {
             }
 
             // the collinear does not overlap w/ existing coliinears, add to list directly
-            if (count < linesgmtSet.size() && p_ix != null) {
+            if (count < linesgmtList.size() && p_ix != null) {
                 Point[] line = p_ix;
                 Point line_p = line[0];
                 Point line_q = line[1];
 
-                if (collinear.get(0).compareTo(line_p) < 0 || collinear.get(collinear.size()-1).compareTo(line_q) > 0) {
+                if ( collinear.get(0).compareTo(line_p) < 0 || collinear.get(collinear.size()-1).compareTo(line_q) > 0) {
                     line_p = collinear.get(0);
                     line_q = collinear.get(collinear.size()-1);
 
                     Point[] newline = new Point[2];
                     newline[0] = line_p;
                     newline[1] = line_q;
-                    linesgmtSet.remove(p_ix);
-                    linesgmtSet.add(newline);
-                    map.put(slope, linesgmtSet);
+                    linesgmtList.remove(p_ix);
+                    linesgmtList.add(newline);
+                    map.put(slope, linesgmtList);
                 }
             }
 
@@ -131,13 +140,13 @@ public class FastCollinearPoints {
             this block of code have to be placed in the last, b/c after adding more linesegment
             the size of the set will be changed */
             // the collinear has overlap w. existing collinears, update linesegment
-            if (count >= linesgmtSet.size() && p_ix != null) {
+            if (count >= linesgmtList.size() && p_ix != null) {
                 Point[] newline = new Point[2];
                 newline[0] = collinear.get(0);
                 newline[1] = collinear.get(collinear.size()-1);
 
-                linesgmtSet.add(newline);
-                map.put(slope, linesgmtSet);
+                linesgmtList.add(newline);
+                map.put(slope, linesgmtList);
                 numberOfSegments++;
             }
 
@@ -146,9 +155,9 @@ public class FastCollinearPoints {
             newline[0] = collinear.get(0);
             newline[1] = collinear.get(collinear.size()-1);
 
-            Set<Point[]> linesgmtSet = new HashSet<>();
-            linesgmtSet.add(newline);
-            map.put(slope, linesgmtSet);
+            ArrayList<Point[]> linesgmtList = new ArrayList<>();
+            linesgmtList.add(newline);
+            map.put(slope, linesgmtList);
             numberOfSegments++;
         }
     }
