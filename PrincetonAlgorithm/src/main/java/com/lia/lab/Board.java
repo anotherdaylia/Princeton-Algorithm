@@ -65,27 +65,23 @@ public class Board {
         return hamming() == 0;
     }
 
-    // a board that is obtained by exchanging any pair of blocks??
+    // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int[][] twinblocks = new int[N][N];
+        int[][] twinBlocks = new int[N][N];
 
         for (int i=0; i<N; i++){
             for (int j=0; j<N; j++){
-                twinblocks[i][j] = blocks[i][j];
+                twinBlocks[i][j] = blocks[i][j];
             }
         }
 
-        if ( blocks[0][0] != 0 && blocks[0][1] != 0 ) {
-            int tmp = blocks[0][0];
-            blocks[0][0] = blocks[0][1];
-            blocks[0][1] = tmp;
+        if ( twinBlocks[0][0] != 0 && twinBlocks[0][1] != 0 ) {
+            exchange(twinBlocks, 0, 0, 0, 1);
         } else {
-            int tmp = blocks[1][0];
-            blocks[1][0] = blocks[1][1];
-            blocks[1][1] = tmp;
+            exchange(twinBlocks, 1, 0, 1, 1);
         }
 
-        return new Board(twinblocks);
+        return new Board(twinBlocks);
     }
 
     // does this board equal y?
@@ -123,9 +119,6 @@ public class Board {
             }
         }
 
-        System.out.println(blocks[i_blank][j_blank] +
-                " position: + (" + i_blank + ", " + j_blank + ")");
-
         MinPQ pq = new MinPQ(new Comparator<Board>() {
 
             @Override
@@ -135,45 +128,40 @@ public class Board {
         });
 
         if ( i_blank > 0 ) {
-            // from left of i_blank
+            // from upper of i_blank
             int[][] blocks_tmp = this.getBlocks();
-            blocks_tmp[i_blank][j_blank] = blocks_tmp[i_blank - 1][j_blank];
-            blocks_tmp[i_blank - 1][j_blank] = 0;
-            //exchange(blocks_tmp[i_blank][j_blank], blocks_tmp[i_blank - 1][j_blank]);
+            exchange(blocks_tmp, i_blank, j_blank, i_blank - 1, j_blank);
             pq.insert(new Board(blocks_tmp));
         }
 
         if ( i_blank < (N-1) ) {
-            // from right of i_blank
+            // from bottom of i_blank
             int[][] blocks_tmp = this.getBlocks();
-            blocks_tmp[i_blank][j_blank] = blocks_tmp[i_blank + 1][j_blank];
-            blocks_tmp[i_blank + 1][j_blank] = 0;
+            exchange(blocks_tmp, i_blank, j_blank, i_blank + 1, j_blank);
             pq.insert(new Board(blocks_tmp));
         }
 
         if ( j_blank > 0 ) {
-            // from bottom of j_blank
+            // from left of j_blank
             int[][] blocks_tmp = this.getBlocks();
-            blocks_tmp[i_blank][j_blank] = blocks_tmp[i_blank][j_blank - 1];
-            blocks_tmp[i_blank][j_blank - 1] = 0;
+            exchange(blocks_tmp, i_blank, j_blank, i_blank, j_blank - 1);
             pq.insert(new Board(blocks_tmp));
         }
 
         if ( j_blank <  (N-1) ) {
-            // from up of j_blank
+            // from right of j_blank
             int[][] blocks_tmp = this.getBlocks();
-            blocks_tmp[i_blank][j_blank] = blocks_tmp[i_blank][j_blank + 1];
-            blocks_tmp[i_blank][j_blank + 1] = 0;
+            exchange(blocks_tmp, i_blank, j_blank, i_blank, j_blank + 1);
             pq.insert(new Board(blocks_tmp));
         }
 
         return pq;
     }
 
-    private void exchange (int a, int b) {
-        int tmp = a;
-        a = b;
-        b = tmp;
+    private void exchange (int[][] blocks, int a, int b, int c, int d) {
+        int tmp = blocks[a][b];
+        blocks[a][b] = blocks[c][d];
+        blocks[c][d] = tmp;
     }
 
     // string representation of this board (in the output format specified below)

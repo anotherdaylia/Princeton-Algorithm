@@ -12,7 +12,6 @@ public class Solver {
     private Board initialTwin;
     private int move = -1;
     private boolean isSolvable = false;
-    //private Stack<Board> solutionStack = new Stack<>(); // solution boards
     private ArrayList<Board> solutionList = new ArrayList<>(); // solution boards
     private MinPQ<SearchNode> minPQ = new MinPQ<>(new Comparator<SearchNode>() {
         @Override
@@ -64,15 +63,15 @@ public class Solver {
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         this.initial = initial;
-        System.out.println("initial: " + initial.toString());
+        //System.out.println("initial: " + initial.toString());
 
-//        this.initialTwin = initial.twin();
-//        System.out.println("twin: " + initialTwin.toString());
+        this.initialTwin = initial.twin();
+        //System.out.println("twin: " + initialTwin.toString());
 
         SearchNode initialNode = new SearchNode(initial, 0, null, false);
-        //SearchNode twinNode = new SearchNode(initialTwin, 0, null, true);
+        SearchNode twinNode = new SearchNode(initialTwin, 0, null, true);
         minPQ.insert(initialNode);
-        //minPQ.insert(twinNode);
+        minPQ.insert(twinNode);
         solve();
     }
 
@@ -81,9 +80,7 @@ public class Solver {
         while (!minPQ.min().getBoard().isGoal()) {
 
             SearchNode searchNode = minPQ.delMin();
-
-            System.out.println("searchnode: " + searchNode.toString());
-
+            //System.out.println("searchnode: " + searchNode.toString());
             int snMove = searchNode.getMove();
 
             for (Board child : searchNode.getBoard().neighbors() ) {
@@ -92,13 +89,12 @@ public class Solver {
                 if (!childNode.equals(searchNode.parent)) {
                     // add the child node to minPQ
                     minPQ.insert(childNode);
-                    System.out.println("child nodes: " + childNode.toString());
-                    //System.out.println("minpq size: " + minPQ.size());
+                    //System.out.println("child nodes: " + childNode.toString());
                 }
             }
         }
 
-
+        // if goal found, add board sequence to arraylist
         SearchNode curNode = minPQ.min();
         if (!curNode.isTwin) {
             this.isSolvable = true;

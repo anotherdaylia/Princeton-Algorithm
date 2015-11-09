@@ -11,7 +11,7 @@ public class SolverTest {
     @Test
     public void solverTest() {
         // create initial board from file
-        In in = new In("src/test/resources/puzzle04.txt");
+        In in = new In("src/test/resources/puzzle0e");
         int N = in.readInt();
         int[][] blocks = new int[N][N];
         for (int i = 0; i < N; i++)
@@ -32,7 +32,7 @@ public class SolverTest {
         }
     }
 
-    @Test
+    //@Test
     public void BoardNeighborTest() {
         // create initial board from file
         In in = new In("src/test/resources/puzzle04.txt");
@@ -49,5 +49,23 @@ public class SolverTest {
             StdOut.println("neighbor:");
             StdOut.print(neighbor.toString());
         }
+    }
+
+    @Test
+    public void BoardTwinTest() {
+        // create initial board from file
+        In in = new In("src/test/resources/puzzle04.txt");
+        int N = in.readInt();
+        int[][] blocks = new int[N][N];
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                blocks[i][j] = in.readInt();
+        Board initial = new Board(blocks);
+        StdOut.println("initial:");
+        StdOut.println(initial.toString());
+
+        Board twin = initial.twin();
+        StdOut.println("twin:");
+        StdOut.println(twin.toString());
     }
 }
