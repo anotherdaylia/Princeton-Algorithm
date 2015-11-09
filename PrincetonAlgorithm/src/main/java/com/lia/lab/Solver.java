@@ -12,7 +12,8 @@ public class Solver {
     private Board initialTwin;
     private int move = -1;
     private boolean isSolvable = false;
-    private Stack<Board> solutionStack = new Stack<>(); // solution boards
+    //private Stack<Board> solutionStack = new Stack<>(); // solution boards
+    private ArrayList<Board> solutionList = new ArrayList<>(); // solution boards
     private MinPQ<SearchNode> minPQ = new MinPQ<>(new Comparator<SearchNode>() {
         @Override
         public int compare(SearchNode node1, SearchNode node2) {
@@ -46,16 +47,33 @@ public class Solver {
         public int getMove() {
             return nodeMove;
         }
+
+        public String toString() {
+            StringBuilder str = new StringBuilder();
+
+            str.append("\n");
+            str.append("move = " + this.getMove() + "\n");
+            str.append("priority = " + this.priority + "\n");
+            str.append("istwin = " + this.isTwin + "\n");
+            str.append(this.getBoard().toString());
+
+            return str.toString();
+        }
     }
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         this.initial = initial;
-        this.initialTwin = initial.twin();
+        System.out.println("initial: " + initial.toString());
+
+//        this.initialTwin = initial.twin();
+//        System.out.println("twin: " + initialTwin.toString());
+
         SearchNode initialNode = new SearchNode(initial, 0, null, false);
-        SearchNode twinNode = new SearchNode(initialTwin, 0, null, true);
+        //SearchNode twinNode = new SearchNode(initialTwin, 0, null, true);
         minPQ.insert(initialNode);
-        minPQ.insert(twinNode);
+        //minPQ.insert(twinNode);
+        solve();
     }
 
     private void solve() {
@@ -63,6 +81,9 @@ public class Solver {
         while (!minPQ.min().getBoard().isGoal()) {
 
             SearchNode searchNode = minPQ.delMin();
+
+            System.out.println("searchnode: " + searchNode.toString());
+
             int snMove = searchNode.getMove();
 
             for (Board child : searchNode.getBoard().neighbors() ) {
@@ -71,9 +92,12 @@ public class Solver {
                 if (!childNode.equals(searchNode.parent)) {
                     // add the child node to minPQ
                     minPQ.insert(childNode);
+                    System.out.println("child nodes: " + childNode.toString());
+                    //System.out.println("minpq size: " + minPQ.size());
                 }
             }
         }
+
 
         SearchNode curNode = minPQ.min();
         if (!curNode.isTwin) {
@@ -81,9 +105,10 @@ public class Solver {
             this.move = curNode.getMove();
 
             while (curNode.parent != null) {
-                solutionStack.push(curNode.getBoard());
+                solutionList.add(curNode.getBoard());
                 curNode = curNode.parent;
             }
+            solutionList.add(curNode.getBoard());
         }
     }
 
@@ -100,7 +125,8 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         if (this.isSolvable){
-            return solutionStack;
+            Collections.reverse(solutionList);
+            return solutionList;
         }else{
             return null;
         }

@@ -62,37 +62,41 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        if ( hamming() == 0 ){
-            return true;
-        }
-        return false;
+        return hamming() == 0;
     }
 
     // a board that is obtained by exchanging any pair of blocks??
     public Board twin() {
-        Board twinboard = new Board(new int[N][N]);
+        int[][] twinblocks = new int[N][N];
 
-        if ( blocks[0][0] == 0 && blocks[0][1] == 0 ) {
-            int tmp = blocks[1][0];
-            blocks[1][0] = blocks[1][1];
-            blocks[1][1] = tmp;
-        } else {
+        for (int i=0; i<N; i++){
+            for (int j=0; j<N; j++){
+                twinblocks[i][j] = blocks[i][j];
+            }
+        }
+
+        if ( blocks[0][0] != 0 && blocks[0][1] != 0 ) {
             int tmp = blocks[0][0];
             blocks[0][0] = blocks[0][1];
             blocks[0][1] = tmp;
+        } else {
+            int tmp = blocks[1][0];
+            blocks[1][0] = blocks[1][1];
+            blocks[1][1] = tmp;
         }
 
-        return twinboard;
+        return new Board(twinblocks);
     }
 
     // does this board equal y?
     public boolean equals(Object y) {
         if ( y == null ) return false;
-        if (y.getClass() != this.getClass()) return false;
+        if ( y.getClass() != this.getClass() ) return false;
 
         Board thatBoard = (Board) y;
-        if ( this.dimension() != thatBoard.dimension() )
+        if ( this.dimension() != thatBoard.dimension() ) {
             return false;
+        }
 
         int[][] blocks_thatBoard = thatBoard.blocks;
         for ( int i = 0; i < N; i++ ) {
@@ -112,11 +116,15 @@ public class Board {
 
         for ( int i = 0; i < N; i++ ) {
             for ( int j = 0; j < N; j++) {
-                if (blocks[i][j] == 0 )
+                if (blocks[i][j] == 0 ) {
                     i_blank = i;
                     j_blank = j;
+                }
             }
         }
+
+        System.out.println(blocks[i_blank][j_blank] +
+                " position: + (" + i_blank + ", " + j_blank + ")");
 
         MinPQ pq = new MinPQ(new Comparator<Board>() {
 
@@ -131,6 +139,7 @@ public class Board {
             int[][] blocks_tmp = this.getBlocks();
             blocks_tmp[i_blank][j_blank] = blocks_tmp[i_blank - 1][j_blank];
             blocks_tmp[i_blank - 1][j_blank] = 0;
+            //exchange(blocks_tmp[i_blank][j_blank], blocks_tmp[i_blank - 1][j_blank]);
             pq.insert(new Board(blocks_tmp));
         }
 
@@ -159,6 +168,12 @@ public class Board {
         }
 
         return pq;
+    }
+
+    private void exchange (int a, int b) {
+        int tmp = a;
+        a = b;
+        b = tmp;
     }
 
     // string representation of this board (in the output format specified below)
