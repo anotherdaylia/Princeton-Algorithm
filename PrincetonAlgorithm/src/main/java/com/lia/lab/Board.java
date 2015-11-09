@@ -171,7 +171,8 @@ public class Board {
 
         for ( int i = 0; i < N; i++ ) {
             for ( int j = 0; j < N; j++) {
-                str.append(String.format("%2d", blocks[i][j]));
+                str.append(String.format("%d", blocks[i][j]));
+                str.append(" ");
             }
             str.append("\n");
         }

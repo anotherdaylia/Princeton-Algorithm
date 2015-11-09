@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class Solver {
     private Board initial;
-    private Board initialTwin;
+    private Board twin;
     private int move = -1;
     private boolean isSolvable = false;
     private ArrayList<Board> solutionList = new ArrayList<>(); // solution boards
@@ -63,13 +63,10 @@ public class Solver {
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         this.initial = initial;
-        //System.out.println("initial: " + initial.toString());
-
-        this.initialTwin = initial.twin();
-        //System.out.println("twin: " + initialTwin.toString());
+        this.twin = initial.twin();
 
         SearchNode initialNode = new SearchNode(initial, 0, null, false);
-        SearchNode twinNode = new SearchNode(initialTwin, 0, null, true);
+        SearchNode twinNode = new SearchNode(twin, 0, null, true);
         minPQ.insert(initialNode);
         minPQ.insert(twinNode);
         solve();
@@ -80,14 +77,15 @@ public class Solver {
         while (!minPQ.min().getBoard().isGoal()) {
 
             SearchNode searchNode = minPQ.delMin();
-            //System.out.println("searchnode: " + searchNode.toString());
+
             int snMove = searchNode.getMove();
 
             for (Board child : searchNode.getBoard().neighbors() ) {
                 SearchNode childNode = new SearchNode(child, snMove + 1, searchNode, searchNode.isTwin);
                 // check if the node is the same as previous search node
-                if (!childNode.equals(searchNode.parent)) {
-                    // add the child node to minPQ
+                if ( searchNode.parent == null ) {
+                    minPQ.insert(childNode);
+                } else if (!childNode.getBoard().equals(searchNode.parent.getBoard())) {
                     minPQ.insert(childNode);
                     //System.out.println("child nodes: " + childNode.toString());
                 }
