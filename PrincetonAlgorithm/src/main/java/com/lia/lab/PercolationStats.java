@@ -20,17 +20,17 @@ public class PercolationStats {
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-
+        return 0.0;
     }
 
     // low  endpoint of 95% confidence interval
     public double confidenceLo() {
-
+        return 0.0;
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHi() {
-
+        return 0.0;
     }
 
     // test client (described below)
