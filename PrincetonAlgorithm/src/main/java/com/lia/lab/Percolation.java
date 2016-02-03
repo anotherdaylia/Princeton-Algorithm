@@ -1,5 +1,7 @@
 package com.lia.lab;
 
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
@@ -93,7 +95,7 @@ public class Percolation {
     public boolean isFull (int i, int j) {
         checkInput(i, j);
 
-        return unionUF.connected(getIndex(i-1, j-1), topSite);
+        return unionUF.connected(getIndex(i - 1, j - 1), topSite);
     }
 
     // does the system percolate?
@@ -112,6 +114,19 @@ public class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
+        int tests = 10;
+        int N = 5;
+        Percolation perc = new Percolation(N);
+
+        for ( int k = 1; k <= tests; k++ ) {
+            int count = 0;
+            while (!perc.percolates()) {
+                int i = StdRandom.uniform(1, N*N);
+                int j = StdRandom.uniform(1, N*N);
+                perc.open(i, j);
+                count++;
+            }
+        }
 
     }
 
