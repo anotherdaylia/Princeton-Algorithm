@@ -1,7 +1,5 @@
 package com.lia.lab;
 
-import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
@@ -116,27 +114,6 @@ public class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
-//        int tests = 10;
-//        int N = 5;
-//        Percolation perc = new Percolation(N);
-//
-//        for ( int k = 1; k <= tests; k++ ) {
-//            int count = 0;
-//            while (!perc.percolates()) {
-//                int i = StdRandom.uniform(1, N*N);
-//                int j = StdRandom.uniform(1, N*N);
-//                perc.open(i, j);
-//                count++;
-//            }
-//        }
-
-        Percolation perc = new Percolation(4);
-        //perc.open(1,1);
-        System.out.println("Is open?: (1,1) - " + perc.getIndex(0,0) + " " + perc.isOpen(1,1) );
-        System.out.println("Is open?: (2,2) - " + perc.getIndex(1,1) + " " + perc.isOpen(2,2) );
-        System.out.println("Is open?: (3,3) - " + perc.getIndex(2,2) + " " + perc.isOpen(3,3) );
-        System.out.println("Is open?: (4,4) - " + perc.getIndex(3,3) + " " + perc.isOpen(4,4) );
-
 
     }
 
