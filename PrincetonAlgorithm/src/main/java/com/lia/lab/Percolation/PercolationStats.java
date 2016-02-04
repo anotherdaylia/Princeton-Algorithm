@@ -7,9 +7,9 @@ import edu.princeton.cs.algs4.StdStats;
  * Created by liqu on 1/30/16.
  */
 public class PercolationStats {
-    Percolation perc;
-    int T; // # of experiments
-    double[] fractions;
+    private Percolation perc;
+    private int T; // # of experiments
+    private double[] fractions;
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T) {

@@ -1,8 +1,6 @@
 package com.lia.lab;
 
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
+import com.lia.lab.Percolation.Percolation;
 import org.junit.Test;
 
 /**

@@ -6,11 +6,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
  * Created by liqu on 1/30/16.
  */
 public class Percolation {
-    int N; // Dimensions of the N by N grid
-    boolean[] sites; // keep track if the site is open
-    WeightedQuickUnionUF unionUF;
-    int topSite;
-    int bottomSite;
+    private int N; // Dimensions of the N by N grid
+    private boolean[] sites; // keep track if the site is open
+    private WeightedQuickUnionUF unionUF;
+    private int topSite;
+    private int bottomSite;
 
     // create N-by-N grid, with all sites blocked
     // 2dArr[row][col]
