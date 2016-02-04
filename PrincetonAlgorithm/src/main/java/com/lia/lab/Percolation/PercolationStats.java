@@ -7,7 +7,7 @@ import edu.princeton.cs.algs4.StdStats;
  * Created by liqu on 1/30/16.
  */
 public class PercolationStats {
-    private Percolation perc;
+    //private Percolation perc;
     private int T; // # of experiments
     private double[] fractions;
 
@@ -25,7 +25,7 @@ public class PercolationStats {
         for ( int k = 0; k < T; k++ ) {
             //System.out.println("k = " + k);
             double count = 0;
-            this.perc = new Percolation(N);
+            Percolation perc = new Percolation(N);
             while ( !perc.percolates() ) {
                 int i = StdRandom.uniform(1, N+1);
                 int j = StdRandom.uniform(1, N+1);
