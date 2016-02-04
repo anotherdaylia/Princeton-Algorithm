@@ -15,6 +15,7 @@ public class Percolation {
     int bottomSite;
 
     // create N-by-N grid, with all sites blocked
+    // 2dArr[row][col]
     public Percolation(int N) {
         if (N < 0) {
             throw new java.lang.IllegalArgumentException(
@@ -27,7 +28,7 @@ public class Percolation {
         // topsite and bottomsite are imaginary sites located above and below the grid
         // each connects to all the sites immediately above or below it.
         // This simplifies the pathfinding process.
-        this.topSite = 0;
+        this.topSite = N * N;
         this.bottomSite = N * N + 1;
         this.unionUF = new WeightedQuickUnionUF( N * N + 2 ); // site + two imaginary sites
         this.sites = new boolean[ N * N ];
@@ -49,20 +50,20 @@ public class Percolation {
         if ( isBottomSite(ix) ) { unionUF.union(ix, bottomSite);}
 
         // 4. union to the site's open neighbors
-        if ( i - 1> 0 && isOpen( i - 1, j )) { // up
-            unionUF.union(ix, getIndex(i-1, j));
+        if ( i - 1 > 0 && isOpen( i - 1, j )) { // up
+            unionUF.union(ix, getIndex(i - 2, j - 1)); // -1 when getting 1d index
         }
 
-        if ( i + 1< N && isOpen( i + 1, j )) { // down
-            unionUF.union(ix, getIndex( i + 1, j));
+        if ( i + 1 < N && isOpen( i + 1, j )) { // down
+            unionUF.union(ix, getIndex( i, j - 1));
         }
 
-        if ( j - 1> 0 && isOpen( i, j - 1 )) { // left
-            unionUF.union(ix, getIndex(i, j - 1));
+        if ( j - 1 > 0 && isOpen( i, j - 1 )) { // left
+            unionUF.union(ix, getIndex(i - 1, j - 2));
         }
 
-        if ( j + 1< N && isOpen( i, j + 1 )) { // right
-            unionUF.union(ix, getIndex(i, j + 1));
+        if ( j + 1 < N && isOpen( i, j + 1 )) { // right
+            unionUF.union(ix, getIndex(i - 1, j));
         }
 
     }
@@ -79,7 +80,8 @@ public class Percolation {
     }
 
     private int getIndex (int i, int j) {
-        return ( i * N + j + 1); // The  +1 compensates the topsite in the beginning
+        //checkInput(i, j);
+        return ( i * N + j );
     }
 
     // is site (row i, column j) open?
@@ -114,19 +116,27 @@ public class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
-        int tests = 10;
-        int N = 5;
-        Percolation perc = new Percolation(N);
+//        int tests = 10;
+//        int N = 5;
+//        Percolation perc = new Percolation(N);
+//
+//        for ( int k = 1; k <= tests; k++ ) {
+//            int count = 0;
+//            while (!perc.percolates()) {
+//                int i = StdRandom.uniform(1, N*N);
+//                int j = StdRandom.uniform(1, N*N);
+//                perc.open(i, j);
+//                count++;
+//            }
+//        }
 
-        for ( int k = 1; k <= tests; k++ ) {
-            int count = 0;
-            while (!perc.percolates()) {
-                int i = StdRandom.uniform(1, N*N);
-                int j = StdRandom.uniform(1, N*N);
-                perc.open(i, j);
-                count++;
-            }
-        }
+        Percolation perc = new Percolation(4);
+        //perc.open(1,1);
+        System.out.println("Is open?: (1,1) - " + perc.getIndex(0,0) + " " + perc.isOpen(1,1) );
+        System.out.println("Is open?: (2,2) - " + perc.getIndex(1,1) + " " + perc.isOpen(2,2) );
+        System.out.println("Is open?: (3,3) - " + perc.getIndex(2,2) + " " + perc.isOpen(3,3) );
+        System.out.println("Is open?: (4,4) - " + perc.getIndex(3,3) + " " + perc.isOpen(4,4) );
+
 
     }
 
