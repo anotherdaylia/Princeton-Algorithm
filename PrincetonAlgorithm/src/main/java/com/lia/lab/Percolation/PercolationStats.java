@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.Percolation;
 
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
