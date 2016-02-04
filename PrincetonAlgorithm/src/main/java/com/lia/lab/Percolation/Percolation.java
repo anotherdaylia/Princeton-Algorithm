@@ -131,7 +131,7 @@ public class Percolation {
 
     private boolean isTopSite ( int ix ) { return ix < N; }
 
-    public boolean isBottomSite ( int ix ) {
+    private boolean isBottomSite ( int ix ) {
         return ix >= ( N - 1 ) * N;
     }
 
@@ -141,4 +141,3 @@ public class Percolation {
     }
 
 }
-
