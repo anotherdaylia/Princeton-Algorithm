@@ -11,6 +11,7 @@ public class Percolation {
     private WeightedQuickUnionUF unionUF;
     private int topSite;
     private int bottomSite;
+    private boolean isPercolated;
 
     // create N-by-N grid, with all sites blocked
     // 2dArr[row][col]
@@ -29,6 +30,7 @@ public class Percolation {
         this.bottomSite = N * N + 1;
         this.unionUF = new WeightedQuickUnionUF( N * N + 2 ); // site + two imaginary sites
         this.sites = new boolean[N * N];
+        this.isPercolated = false;
     }
 
     // open site (row i, column j) if it is not open already
@@ -43,10 +45,15 @@ public class Percolation {
         if (isTopSite(ix)) { unionUF.union(ix, topSite); }
 
         // union site to bottom site if it's full
-        if (isBottomSite(ix)) {
-            if(isFull(i, j)) {
-                unionUF.union(ix, bottomSite);
-            }
+//        if (isBottomSite(ix)) {
+//            if(isFull(i, j)) {
+//                unionUF.union(ix, bottomSite);
+//            }
+//        }
+
+        if (N == 1) {
+            //unionUF.union(ix, bottomSite);
+            isPercolated = true;
         }
 
         // 3. union to the site's open neighbors
@@ -79,8 +86,9 @@ public class Percolation {
     private void updateBottom () {
         for ( int k = 1; k <= N; k++ ) {
             if (isOpen(N, k) && unionUF.connected(getIndex(N - 1, k - 1), topSite)) {
-                    unionUF.union(getIndex(N-1, k-1), bottomSite);
-                    break;
+                    //unionUF.union(getIndex(N-1, k-1), bottomSite);
+                isPercolated = true;
+                break;
             }
         }
     }
@@ -115,7 +123,8 @@ public class Percolation {
     // does the system percolate?
     // equivalence: if the top site is connected to the bottom site?
     public boolean percolates() {
-        return unionUF.connected(topSite, bottomSite);
+        return isPercolated;
+        //return unionUF.connected(topSite, bottomSite);
     }
 
     private boolean isTopSite(int ix) { return ix < N; }
