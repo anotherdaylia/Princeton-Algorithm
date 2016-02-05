@@ -18,9 +18,7 @@ public class PercolationStats {
         }
 
         this.T = T;
-        this.fractions = new double[T];
-
-        System.out.println("filed created");
+        fractions = new double[T];
 
         for ( int k = 0; k < T; k++ ) {
             //System.out.println("k = " + k);
@@ -50,7 +48,7 @@ public class PercolationStats {
     // low  endpoint of 95% confidence interval
     public double confidenceLo() {
 
-        return (mean() - 1.96 * stddev() / Math.sqrt(T) );
+        return ( mean() - 1.96 * stddev() / Math.sqrt(T) );
     }
 
     // high endpoint of 95% confidence interval
