@@ -8,10 +8,10 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private int N; // Dimensions of the N by N grid
     private boolean[] sites; // keep track if the site is open
-    private WeightedQuickUnionUF unionUF;
     private int topSite;
     private int bottomSite;
-    private boolean isPercolated;
+    private WeightedQuickUnionUF unionUF;
+    private WeightedQuickUnionUF fullUF; //without bottom site connection, for backwash problem
 
     // create N-by-N grid, with all sites blocked
     // 2dArr[row][col]
@@ -28,9 +28,9 @@ public class Percolation {
         // This simplifies the pathfinding process.
         this.topSite = N * N;
         this.bottomSite = N * N + 1;
-        this.unionUF = new WeightedQuickUnionUF( N * N + 2 ); // site + two imaginary sites
         this.sites = new boolean[N * N];
-        this.isPercolated = false;
+        this.unionUF = new WeightedQuickUnionUF( N * N + 2 ); // site + two imaginary sites
+        this.fullUF = new WeightedQuickUnionUF( N * N + 2);
     }
 
     // open site (row i, column j) if it is not open already
@@ -41,55 +41,44 @@ public class Percolation {
         // 1. open site (i, j)
         sites[ix] = true;
 
-        // 2. union site to top site if it's on the 1st row
-        if (isTopSite(ix)) { unionUF.union(ix, topSite); }
-
-        // union site to bottom site if it's full
-//        if (isBottomSite(ix)) {
-//            if(isFull(i, j)) {
-//                unionUF.union(ix, bottomSite);
-//            }
-//        }
-
+        // cornor case
         if (N == 1) {
-            //unionUF.union(ix, bottomSite);
-            isPercolated = true;
+            unionUF.union(ix, bottomSite);
+            fullUF.union(ix, bottomSite);
+            //isPercolated = true;
         }
 
-        // 3. union to the site's open neighbors
-        boolean hasNeighbor = false;
+        // 2. union site to top site if it's on the 1st row
+        if (isTopSite(ix)) {
+            unionUF.union(ix, topSite);
+            fullUF.union(ix, topSite);
+        }
+
+        // 3. union site at last row to bottom site at unionUF only.
+        // do not connect them at fullUF for backwash problem.
+        if (isBottomSite(ix)) {
+            unionUF.union(ix, bottomSite);
+        }
+
+        // 4. union to the site's open neighbors
         if ( i > 1 && isOpen(i - 1, j) ) { // up
-            hasNeighbor = true;
             unionUF.union(ix, getIndex(i - 2, j - 1)); // -1 when getting 1d index
+            fullUF.union(ix, getIndex(i - 2, j - 1));
         }
 
         if ( i < N && isOpen(i + 1, j)) { // down
-            hasNeighbor = true;
             unionUF.union(ix, getIndex(i, j - 1));
+            fullUF.union(ix, getIndex(i, j - 1));
         }
 
         if ( j > 1 && isOpen(i, j - 1)) { // left
-            hasNeighbor = true;
             unionUF.union(ix, getIndex(i - 1, j - 2));
+            fullUF.union(ix, getIndex(i - 1, j - 2));
         }
 
         if ( j < N && isOpen(i, j + 1) ) { // right
-            hasNeighbor = true;
             unionUF.union(ix, getIndex(i - 1, j));
-        }
-
-        // 4. union site to bottomsite if it's connected to the top site!!
-        if ( hasNeighbor ) { updateBottom (); }
-    }
-
-    // union full site on the last row to bottom site.
-    private void updateBottom () {
-        for ( int k = 1; k <= N; k++ ) {
-            if (isOpen(N, k) && unionUF.connected(getIndex(N - 1, k - 1), topSite)) {
-                    //unionUF.union(getIndex(N-1, k-1), bottomSite);
-                isPercolated = true;
-                break;
-            }
+            fullUF.union(ix, getIndex(i - 1, j));
         }
     }
 
@@ -104,6 +93,7 @@ public class Percolation {
         }
     }
 
+    // get 1-D index
     private int getIndex(int i, int j) { return ( i * N + j ); }
 
     // is site (row i, column j) open?
@@ -115,23 +105,21 @@ public class Percolation {
 
     // is site (row i, column j) full?
     // equivalence: is site (row i, column j) connected to sites[0][j]?
+    // check this problem at fullUF for backwash issue.
     public boolean isFull(int i, int j) {
         checkInput(i, j);
-        return unionUF.connected(getIndex(i - 1, j - 1), topSite);
+        return fullUF.connected(getIndex(i - 1, j - 1), topSite);
     }
 
     // does the system percolate?
     // equivalence: if the top site is connected to the bottom site?
     public boolean percolates() {
-        return isPercolated;
-        //return unionUF.connected(topSite, bottomSite);
+        return unionUF.connected(topSite, bottomSite);
     }
 
     private boolean isTopSite(int ix) { return ix < N; }
 
-    private boolean isBottomSite(int ix) {
-        return ix >= ( N - 1 ) * N;
-    }
+    private boolean isBottomSite(int ix) { return ix >= ( N - 1 ) * N; }
 
     // test client (optional)
     public static void main (String[] args) {
