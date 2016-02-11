@@ -30,14 +30,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private int N;
     private int first; // index of first element of queue
     private int last;  // index of next available slot
-	private Item[] queueArr;
+	private Item[] queue;
 	
 	// construct an empty randomized queue
 	public RandomizedQueue() {
         this.N = 0;
         this.first = 0;
         this.last = 0;
-        this.queueArr = (Item[]) new Object[DEFAULT_CAPACITY];
+        this.queue = (Item[]) new Object[DEFAULT_CAPACITY];
 	}
 	
 	// is the queue empty?
@@ -54,12 +54,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	public void enqueue(Item item) {
         if (item == null) throw new java.lang.NullPointerException();
 
-        if (N == queueArr.length) resize(queueArr.length * 2);
-
-        queueArr[last] = item;
+        if (N == queue.length) resize(queue.length * 2);
+        queue[last] = item;
         last++;
 
-        if(last == queueArr.length) last = 0;
+        if(last == queue.length) last = 0;
         N++;
 	}
 	
@@ -67,17 +66,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	public Item dequeue() {
         if (isEmpty()) throw new java.util.NoSuchElementException();
 
-        int indexToRm = StdRandom.uniform(first, last);
-        Item itemToRm = queueArr[indexToRm];
+        int ix = (StdRandom.uniform(N) + first) % queue.length;
+        Item itemToRm = queue[ix];
 
-        queueArr[indexToRm] = queueArr[first];
-        queueArr[first] = null;
+        queue[ix] = queue[first];
+        queue[first] = null;
         N--;
         first++;
 
-        if(first == queueArr.length) first = 0;
-
-        if (N > 0 && N == queueArr.length/4) resize(queueArr.length/2);
+        if (first == queue.length) first = 0;
+        if (N > 0 && N == queue.length/4) resize(queue.length/2);
 
         return itemToRm;
 	}
@@ -88,7 +86,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         int indexToRt = StdRandom.uniform(first, last);
 
-        return queueArr[indexToRt];
+        return queue[indexToRt];
 	}
 	
 	// return an independent iterator over items in random order
@@ -101,10 +99,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private int i;
 
         public ArrayIterator() {
+            // 1. copy queue to array
             arr = (Item[]) new Object[N];
-            i = 0;
+            for (int k = 0; k < N; k++) {
+                arr[k] = queue[(k + first) % queue.length];
+            }
 
-            // randomly copy element from queue to arr
+            // 2. shuffle the array
+            for(int k = arr.length - 1; k >=0; k--) {
+                int ix = StdRandom.uniform(0,N);
+                Item tmp = arr[ix];
+                arr[ix] = arr[i];
+                arr[i] = tmp;
+            }
         }
 
         @Override
@@ -114,13 +121,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         public Item next() {
             if (!hasNext()){ throw new java.util.NoSuchElementException(); }
 
-            int nextIndex = StdRandom.uniform(last +1);
-            Item nextItem = queueArr[nextIndex];
-
-            queueArr[nextIndex] = queueArr[i];
-            queueArr[i] = null;
-            i--;
-
+            Item nextItem = arr[i];
+            i++;
             return nextItem;
         }
 
@@ -129,16 +131,21 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize(int capacity) {
-        Item[] newArray = (Item[]) new Object[capacity];
+        Item[] arr = (Item[]) new Object[capacity];
 
-        int j = 0;
-        while (j<= last) {
-            newArray[j] = queueArr[j];
-            j++;
+        for (int k = 0; k < N; k++) {
+            arr[k] = queue[(k + first) % queue.length];
         }
 
-        this.queueArr = newArray;
-        this.last = size() - 1;
+//        int j = 0;
+//        while (j<= last) {
+//            arr[j] = queue[j];
+//            j++;
+//        }
+
+        this.queue = arr;
+        this.first = 0;
+        this.last = N;
     }
 
 	public static void main(String[] args) {
