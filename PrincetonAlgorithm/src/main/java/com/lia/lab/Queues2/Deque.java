@@ -72,7 +72,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         Node<Item> toBeDeleted = first.next;
 
-        first.next = first.next.next;
+        first.next = toBeDeleted.next;
         first.next.prev = first;
 
         toBeDeleted.next = null;
