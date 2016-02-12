@@ -1,5 +1,6 @@
 package com.lia.lab;
 
+import com.lia.lab.Queues2.Deque;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
