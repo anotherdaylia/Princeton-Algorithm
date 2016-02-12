@@ -7,10 +7,14 @@ import java.util.NoSuchElementException;
  * Created by liqu on 2/9/16.
  */
 public class Deque<Item> implements Iterable<Item> {
+    // I think we can name first as head, last as tail.
     private Node<Item> first; //imaginary first node
     private Node<Item> last;  //imaginary last node
     private int N;
 
+    /* why static?
+     * http://stackoverflow.com/questions/253492/static-nested-class-in-java-why
+     */
     private static class Node<Item> { //why static?
         private Item item;
         private Node<Item> next;
@@ -72,6 +76,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         Node<Item> toBeDeleted = first.next;
 
+        // it might be easier to read/understand toBeDeleted than first.next
         first.next = first.next.next;
         first.next.prev = first;
 
