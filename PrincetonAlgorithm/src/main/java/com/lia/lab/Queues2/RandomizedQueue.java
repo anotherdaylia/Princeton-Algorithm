@@ -104,7 +104,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             for (int k = 0; k < N; k++) {
                 arr[k] = queue[(k + first) % queue.length];
             }
-
+            // Why do we a second loop here?
             for (int k = arr.length - 1; k >= 0; k--) {
                 int ix = StdRandom.uniform(0, N);
                 Item tmp = arr[ix];
@@ -132,6 +132,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private void resize(int capacity) {
         Item[] arr = (Item[]) new Object[capacity];
 
+        // this for loop apprears twice, one here, the other one at line 104.
+        // Maybe make it a function?
         for (int k = 0; k < N; k++) {
             arr[k] = queue[(k + first) % queue.length];
         }
