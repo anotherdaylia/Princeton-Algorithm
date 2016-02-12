@@ -1,6 +1,6 @@
 package com.lia.lab.Queues2;
 
-import com.lia.lab.Queues2.RandomizedQueue;
+
 import edu.princeton.cs.algs4.*;
 /**
  * Created by liqu on 9/29/15.
