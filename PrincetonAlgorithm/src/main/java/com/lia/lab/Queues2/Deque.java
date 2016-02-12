@@ -38,16 +38,23 @@ public class Deque<Item> implements Iterable<Item> {
 
     // add the item to the first
     public void addFirst(Item item) {
+        if(item == null) throw new java.lang.NullPointerException("The item to be added is null");
+
         Node<Item> newItem = new Node<Item>();
         newItem.item = item;
         newItem.next = first.next;
         newItem.prev = first;
+
+        first.next.prev = newItem;
         first.next = newItem;
+
         N++;
     }
 
     // add the item to the end
     public void addLast(Item item) {
+        if(item == null) throw new java.lang.NullPointerException("The item to be added is null");
+
         Node<Item> newItem = new Node<Item>();
         newItem.item = item;
         newItem.prev = last.prev;
