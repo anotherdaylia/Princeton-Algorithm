@@ -105,12 +105,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 arr[k] = queue[(k + first) % queue.length];
             }
 
-            // 2. shuffle the array
             for (int k = arr.length - 1; k >= 0; k--) {
                 int ix = StdRandom.uniform(0, N);
                 Item tmp = arr[ix];
-                arr[ix] = arr[i];
-                arr[i] = tmp;
+                arr[ix] = arr[k];
+                arr[k] = tmp;
             }
         }
 
