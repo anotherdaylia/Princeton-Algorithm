@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class BruteCollinearPoints {
     private final Point[] points;
-    private final Point[] pointsCopy;
+    //private final Point[] pointsCopy;
     private int numberOfSegments;
     private final LineSegment[] lineSegments;
 
@@ -17,14 +17,12 @@ public class BruteCollinearPoints {
         this.numberOfSegments = 0;
 
         this.points = new Point[pt.length];
-        this.pointsCopy = new Point[points.length];
         System.arraycopy(pt, 0, this.points, 0, pt.length);
-        System.arraycopy(this.points, 0, pointsCopy, 0, points.length);
 
-        Arrays.sort(pointsCopy);
-        for (int i = 1; i < pointsCopy.length; i++) {
+        Arrays.sort(points);
+        for (int i = 1; i < points.length; i++) {
             // throws an exception if duplicate points
-            if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
+            if (points[i - 1].compareTo(points[i]) == 0) {
                 throw new java.lang.IllegalArgumentException();
             }
         }
@@ -37,6 +35,7 @@ public class BruteCollinearPoints {
         return numberOfSegments;
     }
 
+
     public LineSegment[] segments() {
         LineSegment[] lsToReturn = new LineSegment[lineSegments.length];
         System.arraycopy(lineSegments, 0, lsToReturn, 0, lineSegments.length);
@@ -47,69 +46,38 @@ public class BruteCollinearPoints {
     private LineSegment[] calculateSegments() {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
-        for (int p = 0; p < pointsCopy.length; p++) {
-            for (int q = p + 1; q < pointsCopy.length; q++) {
-                for (int r = q + 1; r < pointsCopy.length; r++) {
-                    for (int s = r + 1; s < pointsCopy.length; s++) {
+        for (int p = 0; p < points.length; p++) {
+            for (int q = p + 1; q < points.length; q++) {
+                for (int r = q + 1; r < points.length; r++) {
+                    for (int s = r + 1; s < points.length; s++) {
 
-                        Double slope1 = pointsCopy[p].slopeTo(pointsCopy[q]);
-                        Double slope2 = pointsCopy[p].slopeTo(pointsCopy[r]);
-                        Double slope3 = pointsCopy[p].slopeTo(pointsCopy[s]);
+                        Double slope1 = points[p].slopeTo(points[q]);
+                        Double slope2 = points[p].slopeTo(points[r]);
+                        Double slope3 = points[p].slopeTo(points[s]);
 
                         if ((Double.compare(slope1, slope2) == 0) && (Double.compare(slope1, slope3) == 0)){
 
                             ArrayList<Point> collinear = new ArrayList<>();
-                            collinear.add(pointsCopy[p]);
-                            collinear.add(pointsCopy[q]);
-                            collinear.add(pointsCopy[r]);
-                            collinear.add(pointsCopy[s]);
+                            collinear.add(points[p]);
+                            collinear.add(points[q]);
+                            collinear.add(points[r]);
+                            collinear.add(points[s]);
                             Collections.sort(collinear);
 
-                            // check if the new collinear overlap with existing collinears
+                            // check if the new collinear overlap with existing collinear
                             if (map.containsKey(slope1)) {
                                 ArrayList<Point[]> linesgmtList = map.get(slope1);
-                                int index = Integer.MAX_VALUE; // track the linesegment needs update
-
-                                for (Point[] ls : linesgmtList) {
-                                    Point ls_p = ls[0];
-
-                                    if (ls_p.slopeTo(collinear.get(0)) == slope1) {
-                                        index = linesgmtList.indexOf(ls);
-                                        break;
-                                    }
-                                }
-
-                                // the collinear has overlap w. existing collinears, update linesegment
-                                if (index != Integer.MAX_VALUE) {
-                                    Point[] ls = linesgmtList.get(index);
-                                    Point ls_p = ls[0];
-                                    Point ls_q = ls[1];
-
-                                    if (collinear.get(0).compareTo(ls_p) < 0 || collinear.get(3).compareTo(ls_q) > 0) {
-                                        ls_p = collinear.get(0);
-                                        ls_q = collinear.get(3);
-
-                                        Point[] newLs = new Point[2];
-                                        newLs[0] = ls_p;
-                                        newLs[1] = ls_q;
-
-                                        linesgmtList.set(index, newLs);
-                                        map.put(slope1, linesgmtList);
-                                    }
-                                }
-
                                 // the collinear does not overlap w/ existing collinear, add to list directly
                                 /* Bug fixed:
-                                this block of code have to be placed in the last, b/c after adding more linesegments
+                                this block of code have to be placed in the last,
+                                b/c after adding more line segments
                                 the size of the arraylist will be changed */
-                                if (index == Integer.MAX_VALUE) {
-                                    Point[] newLs = new Point[2];
-                                    newLs[0] = collinear.get(0);
-                                    newLs[1] = collinear.get(collinear.size()-1);
-                                    linesgmtList.add(newLs);
-                                    map.put(slope1, linesgmtList);
-                                    numberOfSegments++;
-                                }
+                                Point[] newLs = new Point[2];
+                                newLs[0] = collinear.get(0);
+                                newLs[1] = collinear.get(collinear.size()-1);
+                                linesgmtList.add(newLs);
+                                map.put(slope1, linesgmtList);
+                                numberOfSegments++;
 
                             } else { // if map does not contain the slope of collinear, add the collinear
                                 Point[] newLs = new Point[2];

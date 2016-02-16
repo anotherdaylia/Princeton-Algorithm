@@ -2,11 +2,11 @@ package com.lia.lab.Collinear2;
 import java.util.*;
 
 /**
- * Created by liqu on 02/14/16.
+ * Modified by liqu on 02/14/16.
  */
 public class FastCollinearPoints {
     private final Point[] points;
-    private final Point[] pointsCopy;
+    private final Point[] pointscopy;
     private int numberOfSegments = 0;
     private final LineSegment[] lineSegments;
 
@@ -16,14 +16,14 @@ public class FastCollinearPoints {
         this.numberOfSegments = 0;
 
         this.points = new Point[pt.length];
-        this.pointsCopy = new Point[points.length];
+        this.pointscopy = new Point[points.length];
         System.arraycopy(pt, 0, this.points, 0, pt.length);
-        System.arraycopy(this.points, 0, pointsCopy, 0, points.length);
+        System.arraycopy(this.points, 0, pointscopy, 0, points.length);
 
-        Arrays.sort(pointsCopy);
-        for (int i = 1; i < pointsCopy.length; i++) {
+        Arrays.sort(pointscopy);
+        for (int i = 1; i < pointscopy.length; i++) {
             // throws an exception if duplicate points
-            if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
+            if (pointscopy[i - 1].compareTo(pointscopy[i]) == 0) {
                 throw new java.lang.IllegalArgumentException();
             }
         }
@@ -48,24 +48,23 @@ public class FastCollinearPoints {
 
         for (int p = 0; p < points.length; p++) {
 
-            Arrays.sort(pointsCopy, points[p].slopeOrder());
+            Arrays.sort(pointscopy, points[p].slopeOrder());
 
             ArrayList<Point> collinear = new ArrayList<>(points.length);
 
-            for (int q = 0 ; q < pointsCopy.length; q++) {
-                if (points[p].compareTo(pointsCopy[q]) == 0) { continue; }
+            for (int q = 0 ; q < pointscopy.length; q++) {
 
                 if (collinear.isEmpty()) {
-                    collinear.add(pointsCopy[q]);
-                } else if (points[p].slopeTo(pointsCopy[q - 1]) == points[p].slopeTo(pointsCopy[q])) {
-                    collinear.add(pointsCopy[q]);
+                    collinear.add(pointscopy[q]);
+                } else if (points[p].slopeTo(pointscopy[q - 1]) == points[p].slopeTo(pointscopy[q])) {
+                    collinear.add(pointscopy[q]);
                 } else if(collinear.size() > 2) {
                     checkOverlap(collinear, p, map);
                     collinear.clear();
-                    collinear.add(pointsCopy[q]);
+                    collinear.add(pointscopy[q]);
                 } else {
                     collinear.clear();
-                    collinear.add(pointsCopy[q]);
+                    collinear.add(pointscopy[q]);
                 }
             }
 
@@ -102,42 +101,23 @@ public class FastCollinearPoints {
         if (map.containsKey(slope)) {
             ArrayList<Point[]> linesgmtList = map.get(slope);
             int count = 0; // track the number of linesegment have gone through in linesgmtList
-            Point[] p_ix = new Point[2]; // track the linesegment need update
 
             for (Point[] line : linesgmtList) {
                 Point ls_p = line[0];
 
                 // check if points on the collinear is on the existing collier
                 if (ls_p.slopeTo(collinear.get(0)) == slope || ls_p.compareTo(collinear.get(0)) == 0) { // Overlap
-                    p_ix = line;
                     break;
                 } else { // Not overlap
                     count++;
                 }
             }
 
-            // the collinear does not overlap w/ existing coliinears, add to list directly
-            if (count < linesgmtList.size()) {
-                Point line_p = p_ix[0];
-                Point line_q = p_ix[1];
-
-                if ( collinear.get(0).compareTo(line_p) < 0 || collinear.get(collinear.size()-1).compareTo(line_q) > 0) {
-                    line_p = collinear.get(0);
-                    line_q = collinear.get(collinear.size()-1);
-
-                    Point[] newline = new Point[2];
-                    newline[0] = line_p;
-                    newline[1] = line_q;
-                    linesgmtList.remove(p_ix);
-                    linesgmtList.add(newline);
-                    map.put(slope, linesgmtList);
-                }
-            }
-
             /* Bug fixed:
-            this block of code have to be placed in the last, b/c after adding more linesegment
+            this block of code have to be placed in the last, b/c after adding more line segment
             the size of the set will be changed */
-            // the collinear has overlap w. existing collinears, update linesegment
+
+            // the collinear does not overlap w/ existing collinear, add to list directly
             if (count >= linesgmtList.size()) {
                 Point[] newline = new Point[2];
                 newline[0] = collinear.get(0);
