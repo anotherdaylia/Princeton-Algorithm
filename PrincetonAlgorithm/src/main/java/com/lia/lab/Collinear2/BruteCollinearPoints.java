@@ -1,6 +1,5 @@
 package com.lia.lab.Collinear2;
 
-import edu.princeton.cs.algs4.*;
 import java.util.*;
 
 /**
@@ -10,15 +9,17 @@ public class BruteCollinearPoints {
     private final Point[] points;
     private final Point[] pointsCopy;
     private int numberOfSegments;
+    private final LineSegment[] lineSegments;
 
-    // finds all line segments containing 4 points
-    public BruteCollinearPoints(Point[] points) {
-        if (points == null) {throw new java.lang.NullPointerException();}
-        this.points = points;
+    // finds all line calculateSegments containing 4 points
+    public BruteCollinearPoints(Point[] pt) {
+        if (pt == null) {throw new java.lang.NullPointerException();}
         this.numberOfSegments = 0;
 
+        this.points = new Point[pt.length];
         this.pointsCopy = new Point[points.length];
-        System.arraycopy(points, 0, pointsCopy, 0, points.length);
+        System.arraycopy(pt, 0, this.points, 0, pt.length);
+        System.arraycopy(this.points, 0, pointsCopy, 0, points.length);
 
         Arrays.sort(pointsCopy);
         for (int i = 1; i < pointsCopy.length; i++) {
@@ -27,33 +28,41 @@ public class BruteCollinearPoints {
                 throw new java.lang.IllegalArgumentException();
             }
         }
+
+        lineSegments = calculateSegments();
     }
 
-    // the number of line segments
+    // the number of line calculateSegments
     public int numberOfSegments() {
         return numberOfSegments;
     }
 
-    // the line segments
     public LineSegment[] segments() {
+        LineSegment[] lsToReturn = new LineSegment[lineSegments.length];
+        System.arraycopy(lineSegments, 0, lsToReturn, 0, lineSegments.length);
+        return lsToReturn;
+    }
+
+    // the line calculateSegments
+    private LineSegment[] calculateSegments() {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
-        for (int p = 0; p < points.length; p++) {
-            for (int q = p + 1; q < points.length; q++) {
-                for (int r = q + 1; r < points.length; r++) {
-                    for (int s = r + 1; s < points.length; s++) {
+        for (int p = 0; p < pointsCopy.length; p++) {
+            for (int q = p + 1; q < pointsCopy.length; q++) {
+                for (int r = q + 1; r < pointsCopy.length; r++) {
+                    for (int s = r + 1; s < pointsCopy.length; s++) {
 
-                        Double slope1 = points[p].slopeTo(points[q]);
-                        Double slope2 = points[p].slopeTo(points[r]);
-                        Double slope3 = points[p].slopeTo(points[s]);
+                        Double slope1 = pointsCopy[p].slopeTo(pointsCopy[q]);
+                        Double slope2 = pointsCopy[p].slopeTo(pointsCopy[r]);
+                        Double slope3 = pointsCopy[p].slopeTo(pointsCopy[s]);
 
                         if ((Double.compare(slope1, slope2) == 0) && (Double.compare(slope1, slope3) == 0)){
 
                             ArrayList<Point> collinear = new ArrayList<>();
-                            collinear.add(points[p]);
-                            collinear.add(points[q]);
-                            collinear.add(points[r]);
-                            collinear.add(points[s]);
+                            collinear.add(pointsCopy[p]);
+                            collinear.add(pointsCopy[q]);
+                            collinear.add(pointsCopy[r]);
+                            collinear.add(pointsCopy[s]);
                             Collections.sort(collinear);
 
                             // check if the new collinear overlap with existing collinears
@@ -116,7 +125,6 @@ public class BruteCollinearPoints {
                 }
             }
         }
-
         return convertToArr(map);
     }
 

@@ -5,7 +5,7 @@ package com.lia.lab.Collinear2;
  *  Execution:    none
  *  Dependencies: Point.java
  *
- *  An immutable datat ype for Line segments in the plane.
+ *  An immutable datat ype for Line calculateSegments in the plane.
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  *  DO NOT MODIFY THIS CODE.

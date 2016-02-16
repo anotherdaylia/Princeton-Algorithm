@@ -1,5 +1,4 @@
 package com.lia.lab.Collinear2;
-
 import java.util.*;
 
 /**
@@ -9,31 +8,42 @@ public class FastCollinearPoints {
     private final Point[] points;
     private final Point[] pointsCopy;
     private int numberOfSegments = 0;
+    private final LineSegment[] lineSegments;
 
-    // finds all line segments containing 4 or more points
-    public FastCollinearPoints(Point[] points) {
-        if (points == null) { throw new java.lang.NullPointerException(); }
-        this.points = points;
+    // finds all line calculateSegments containing 4 or more points
+    public FastCollinearPoints(Point[] pt) {
+        if (pt == null) {throw new java.lang.NullPointerException();}
         this.numberOfSegments = 0;
 
+        this.points = new Point[pt.length];
         this.pointsCopy = new Point[points.length];
-        System.arraycopy(points, 0, pointsCopy, 0, points.length);
+        System.arraycopy(pt, 0, this.points, 0, pt.length);
+        System.arraycopy(this.points, 0, pointsCopy, 0, points.length);
 
         Arrays.sort(pointsCopy);
         for (int i = 1; i < pointsCopy.length; i++) {
-
             // throws an exception if duplicate points
             if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
                 throw new java.lang.IllegalArgumentException();
             }
         }
+
+        lineSegments = calculateSegments();
     }
 
-    // the number of line segments
-    public int numberOfSegments() { return numberOfSegments; }
+    // the number of line calculateSegments
+    public int numberOfSegments() {
+        return numberOfSegments;
+    }
 
-    // the line segments
     public LineSegment[] segments() {
+        LineSegment[] lsToReturn = new LineSegment[lineSegments.length];
+        System.arraycopy(lineSegments, 0, lsToReturn, 0, lineSegments.length);
+        return lsToReturn;
+    }
+
+    // the line calculateSegments
+    private LineSegment[] calculateSegments() {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
         for (int p = 0; p < points.length; p++) {
