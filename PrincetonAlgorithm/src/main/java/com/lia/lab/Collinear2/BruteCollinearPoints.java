@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * Created by liqu on 10/1/15.
+ * Modified by liqu on 02/14/16
  */
 public class BruteCollinearPoints {
     private final Point[] points;

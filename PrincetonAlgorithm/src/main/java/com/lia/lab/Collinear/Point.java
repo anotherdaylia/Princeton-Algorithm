@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.Collinear;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 /**

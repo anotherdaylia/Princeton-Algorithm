@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.Collinear;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ public class FastCollinearPoints_debug {
     private Point[] pointsCopy;
     private int numberOfSegments = 0;
 
-    // finds all line segments containing 4 or more points
+    // finds all line calculateSegments containing 4 or more points
     public FastCollinearPoints_debug(Point[] points) {
         if (points == null) {
             throw new NullPointerException();
@@ -19,10 +19,10 @@ public class FastCollinearPoints_debug {
         this.numberOfSegments = 0;
     }
 
-    // the number of line segments
+    // the number of line calculateSegments
     public int numberOfSegments() { return numberOfSegments; }
 
-    // the line segments
+    // the line calculateSegments
     public LineSegment[] segments() {
         HashMap<Double, Set<Point[]>> map = new HashMap<>();
 

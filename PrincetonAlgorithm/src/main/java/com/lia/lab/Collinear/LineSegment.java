@@ -1,10 +1,10 @@
-package com.lia.lab;
+package com.lia.lab.Collinear;
 /*************************************************************************
  *  Compilation:  javac LineSegment.java
  *  Execution:    none
  *  Dependencies: Point.java
  *
- *  An immutable datat ype for Line segments in the plane.
+ *  An immutable datat ype for Line calculateSegments in the plane.
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  *  DO NOT MODIFY THIS CODE.

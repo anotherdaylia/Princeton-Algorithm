@@ -1,6 +1,5 @@
-package com.lia.lab;
+package com.lia.lab.Collinear;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -11,30 +10,33 @@ public class FastCollinearPoints {
     private Point[] pointsCopy;
     private int numberOfSegments = 0;
 
-    // finds all line segments containing 4 or more points
+    // finds all line calculateSegments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
         if (points == null) { throw new java.lang.NullPointerException(); }
         this.points = points;
         this.numberOfSegments = 0;
 
-        // throws an exception if duplicate points
         this.pointsCopy = new Point[points.length];
-        for (int i = 0; i < points.length; i++) {
-            pointsCopy[i] = points[i];
-        }
+
+//        for (int i = 0; i < points.length; i++) {
+//            pointsCopy[i] = points[i];
+//        }
+        System.arraycopy(points, 0, pointsCopy, 0, points.length);
 
         Arrays.sort(pointsCopy);
         for (int i = 1; i < pointsCopy.length; i++) {
+
+            // throws an exception if duplicate points
             if (pointsCopy[i - 1].compareTo(pointsCopy[i]) == 0) {
                 throw new java.lang.IllegalArgumentException();
             }
         }
     }
 
-    // the number of line segments
+    // the number of line calculateSegments
     public int numberOfSegments() { return numberOfSegments; }
 
-    // the line segments
+    // the line calculateSegments
     public LineSegment[] segments() {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
@@ -117,7 +119,7 @@ public class FastCollinearPoints {
                 }
             }
 
-            // the collinear does not overlap w/ existing coliinears, add to list directly
+            // the collinear does not overlap w/ existing collinear, add to list directly
             if (count < linesgmtList.size() && p_ix != null) {
                 Point[] line = p_ix;
                 Point line_p = line[0];

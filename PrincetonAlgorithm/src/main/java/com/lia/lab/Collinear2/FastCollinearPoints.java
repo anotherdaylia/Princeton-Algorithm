@@ -11,7 +11,7 @@ public class FastCollinearPoints {
     private final LineSegment[] lineSegments;
 
     // finds all line calculateSegments containing 4 or more points
-    public FastCollinearPoints(Point[] pt) {
+    public FastCollinearPoints (Point[] pt) {
         if (pt == null) {throw new java.lang.NullPointerException();}
         this.numberOfSegments = 0;
 
@@ -49,7 +49,6 @@ public class FastCollinearPoints {
         for (int p = 0; p < points.length; p++) {
 
             Arrays.sort(pointscopy, points[p].slopeOrder());
-
             ArrayList<Point> collinear = new ArrayList<>(points.length);
 
             for (int q = 0 ; q < pointscopy.length; q++) {
@@ -68,10 +67,7 @@ public class FastCollinearPoints {
                 }
             }
 
-            if (collinear.size() > 2) {
-                checkOverlap(collinear, p, map);
-            }
-
+            if (collinear.size() > 2) { checkOverlap(collinear, p, map); }
         }
 
         return convertToArr(map);
@@ -116,7 +112,6 @@ public class FastCollinearPoints {
             /* Bug fixed:
             this block of code have to be placed in the last, b/c after adding more line segment
             the size of the set will be changed */
-
             // the collinear does not overlap w/ existing collinear, add to list directly
             if (count >= linesgmtList.size()) {
                 Point[] newline = new Point[2];

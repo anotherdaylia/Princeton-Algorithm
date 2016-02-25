@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.Collinear;
 
 import edu.princeton.cs.algs4.*;
 import java.util.*;
@@ -11,7 +11,7 @@ public class BruteCollinearPoints {
     private Point[] pointsCopy;
     private int numberOfSegments;
 
-    // finds all line segments containing 4 points
+    // finds all line calculateSegments containing 4 points
     public BruteCollinearPoints(Point[] points) {
         if (points == null) {throw new java.lang.NullPointerException();}
         this.points = points;
@@ -31,12 +31,12 @@ public class BruteCollinearPoints {
         }
     }
 
-    // the number of line segments
+    // the number of line calculateSegments
     public int numberOfSegments() {
         return numberOfSegments;
     }
 
-    // the line segments
+    // the line calculateSegments
     public LineSegment[] segments() {
         HashMap<Double, ArrayList<Point[]>> map = new HashMap<>();
 
