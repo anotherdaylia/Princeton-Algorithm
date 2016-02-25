@@ -1,9 +1,7 @@
 package com.lia.lab.EightPuzzle;
 
-import edu.princeton.cs.algs4.MinPQ;
-
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
 
 /**
  * Created by liqu on 11/4/15.
@@ -12,14 +10,13 @@ import java.util.Comparator;
 public class Board {
     private final int[][] blocks;
     private final int N;
-    //private Comparator<Board> comparator;
 
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
         this.N = blocks.length;
         this.blocks = new int[N][];
-        for (int i=0; i<N; i++){
+        for (int i = 0; i < N; i++) {
             this.blocks[i] = Arrays.copyOf(blocks[i], N);
         }
     }
@@ -34,8 +31,8 @@ public class Board {
         int count = 0;
 
         for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N && i+j < 2*N - 2; j++) {
-                if (blocks[i][j] != i*dimension() + j + 1) {
+            for (int j = 0; j < N && i + j < 2 * N - 2; j++) {
+                if (blocks[i][j] != i * dimension() + j + 1) {
                     count++;
                 }
             }
@@ -70,8 +67,8 @@ public class Board {
     public Board twin() {
         int[][] twinBlocks = new int[N][N];
 
-        for (int i=0; i<N; i++) {
-            for (int j=0; j<N; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
                 twinBlocks[i][j] = blocks[i][j];
             }
         }
@@ -120,46 +117,49 @@ public class Board {
             }
         }
 
-        MinPQ<Board> pq = new MinPQ<>(new Comparator<Board>() {
+        ArrayList<Board> neighbor = new ArrayList<>();
 
-            @Override
-            public int compare(Board b1, Board b2) {
-                return b1.manhattan() - b2.manhattan();
-            }
-        });
+//        MinPQ<Board> pq = new MinPQ<>(new Comparator<Board>() {
+//
+//            @Override
+//            public int compare(Board b1, Board b2) {
+//                return b1.manhattan() - b2.manhattan();
+//            }
+//        });
 
         if (i_blank > 0) {
             // from upper of i_blank
             int[][] blocks_tmp = this.getBlocks();
             exchange(blocks_tmp, i_blank, j_blank, i_blank - 1, j_blank);
-            pq.insert(new Board(blocks_tmp));
+            //pq.insert(new Board(blocks_tmp));
+            neighbor.add(new Board(blocks_tmp));
         }
 
         if (i_blank < (N-1)) {
             // from bottom of i_blank
             int[][] blocks_tmp = this.getBlocks();
             exchange(blocks_tmp, i_blank, j_blank, i_blank + 1, j_blank);
-            pq.insert(new Board(blocks_tmp));
+            neighbor.add(new Board(blocks_tmp));
         }
 
         if (j_blank > 0) {
             // from left of j_blank
             int[][] blocks_tmp = this.getBlocks();
             exchange(blocks_tmp, i_blank, j_blank, i_blank, j_blank - 1);
-            pq.insert(new Board(blocks_tmp));
+            neighbor.add(new Board(blocks_tmp));
         }
 
-        if (j_blank <  (N-1)) {
+        if (j_blank < (N-1)) {
             // from right of j_blank
             int[][] blocks_tmp = this.getBlocks();
             exchange(blocks_tmp, i_blank, j_blank, i_blank, j_blank + 1);
-            pq.insert(new Board(blocks_tmp));
+            neighbor.add(new Board(blocks_tmp));
         }
 
-        return pq;
+        return neighbor;
     }
 
-    private void exchange (int[][] blocks, int a, int b, int c, int d) {
+    private void exchange(int[][] blocks, int a, int b, int c, int d) {
         int tmp = blocks[a][b];
         blocks[a][b] = blocks[c][d];
         blocks[c][d] = tmp;

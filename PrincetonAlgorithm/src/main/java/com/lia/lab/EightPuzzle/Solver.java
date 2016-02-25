@@ -13,7 +13,7 @@ public class Solver {
     private ArrayList<Board> solutionList = new ArrayList<>(); // solution boards
     private MinPQ<SearchNode> minPQ = new MinPQ<>();
 
-    private class SearchNode implements Comparable<SearchNode>{
+    private class SearchNode implements Comparable<SearchNode> {
         private Board node;
         private int nodeMove;
         private int priority;
@@ -108,7 +108,7 @@ public class Solver {
         if (this.isSolvable) {
             Collections.reverse(solutionList);
             return solutionList;
-        }else{
+        } else {
             return null;
         }
     }
