@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.EightPuzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 
@@ -11,7 +11,7 @@ import java.util.Comparator;
 public class Board {
     private final int[][] blocks;
     private final int N;
-
+    //private Comparator<Board> comparator;
 
     // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
@@ -119,7 +119,7 @@ public class Board {
             }
         }
 
-        MinPQ pq = new MinPQ(new Comparator<Board>() {
+        MinPQ<Board> pq = new MinPQ<>(new Comparator<Board>() {
 
             @Override
             public int compare(Board b1, Board b2) {

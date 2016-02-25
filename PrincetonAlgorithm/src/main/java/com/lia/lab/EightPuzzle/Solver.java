@@ -1,4 +1,4 @@
-package com.lia.lab;
+package com.lia.lab.EightPuzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 
