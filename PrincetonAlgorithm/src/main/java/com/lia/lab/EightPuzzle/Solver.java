@@ -1,24 +1,17 @@
 package com.lia.lab.EightPuzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
-
 import java.util.*;
 
 /**
  * Created by liqu on 11/7/15.
  */
 public class Solver {
-    private Board initial;
     private Board twin;
     private int move = -1;
     private boolean isSolvable = false;
     private ArrayList<Board> solutionList = new ArrayList<>(); // solution boards
-    private MinPQ<SearchNode> minPQ = new MinPQ<>(new Comparator<SearchNode>() {
-        @Override
-        public int compare(SearchNode node1, SearchNode node2) {
-            return node1.priority - node2.priority;
-        }
-    });
+    private MinPQ<SearchNode> minPQ = new MinPQ<>();
 
     private class SearchNode implements Comparable<SearchNode>{
         private Board node;
@@ -35,6 +28,7 @@ public class Solver {
             this.isTwin = isTwin;
         }
 
+        @Override
         public int compareTo(SearchNode thatNode) {
             return this.priority - thatNode.priority;
         }
@@ -43,7 +37,7 @@ public class Solver {
             return node;
         }
 
-        public int getMove() {
+        public int getMoves() {
             return nodeMove;
         }
 
@@ -51,7 +45,7 @@ public class Solver {
             StringBuilder str = new StringBuilder();
 
             str.append("\n");
-            str.append("move = " + this.getMove() + "\n");
+            str.append("move = " + this.getMoves() + "\n");
             str.append("priority = " + this.priority + "\n");
             str.append("istwin = " + this.isTwin + "\n");
             str.append(this.getBoard().toString());
@@ -62,7 +56,6 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        this.initial = initial;
         this.twin = initial.twin();
 
         SearchNode initialNode = new SearchNode(initial, 0, null, false);
@@ -78,16 +71,14 @@ public class Solver {
 
             SearchNode searchNode = minPQ.delMin();
 
-            int snMove = searchNode.getMove();
-
-            for (Board child : searchNode.getBoard().neighbors() ) {
-                SearchNode childNode = new SearchNode(child, snMove + 1, searchNode, searchNode.isTwin);
+            for (Board neighbor : searchNode.getBoard().neighbors()) {
+                SearchNode child = new SearchNode(neighbor, searchNode.getMoves() + 1, searchNode, searchNode.isTwin);
                 // check if the node is the same as previous search node
-                if ( searchNode.parent == null ) {
-                    minPQ.insert(childNode);
-                } else if (!childNode.getBoard().equals(searchNode.parent.getBoard())) {
-                    minPQ.insert(childNode);
-                    //System.out.println("child nodes: " + childNode.toString());
+                if (searchNode.parent == null) {
+                    minPQ.insert(child);
+                } else if (!child.getBoard().equals(searchNode.parent.getBoard())) {
+                    minPQ.insert(child);
+                    //System.out.println("neighbor nodes: " + child.toString());
                 }
             }
         }
@@ -96,7 +87,7 @@ public class Solver {
         SearchNode curNode = minPQ.min();
         if (!curNode.isTwin) {
             this.isSolvable = true;
-            this.move = curNode.getMove();
+            this.move = curNode.getMoves();
 
             while (curNode.parent != null) {
                 solutionList.add(curNode.getBoard());
@@ -107,18 +98,14 @@ public class Solver {
     }
 
     // is the initial board isSolvable?
-    public boolean isSolvable() {
-        return isSolvable;
-    }
+    public boolean isSolvable() { return isSolvable; }
 
     // min number of nodeMove to solve initial board; -1 if unsolvable
-    public int moves() {
-        return move;
-    }
+    public int moves() { return move; }
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        if (this.isSolvable){
+        if (this.isSolvable) {
             Collections.reverse(solutionList);
             return solutionList;
         }else{
