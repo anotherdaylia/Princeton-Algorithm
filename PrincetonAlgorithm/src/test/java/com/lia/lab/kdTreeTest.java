@@ -76,7 +76,7 @@ public class kdTreeTest {
         }
     }
 
-    @Test
+    //Test
     public void clientTest() {
 
         String filename = "src/test/resources/pointset_sm.txt";
@@ -152,7 +152,7 @@ public class kdTreeTest {
         }
     }
 
-    //Test
+    @Test
     public void NearestNeighborTest() {
         String filename = "src/test/resources/pointset_sm.txt";
         In in = new In(filename);
@@ -160,14 +160,14 @@ public class kdTreeTest {
         StdDraw.show(0);
 
         // initialize the two data structures with point from standard input
-        PointSET brute = new PointSET();
+        //PointSET brute = new PointSET();
         KdTree kdtree = new KdTree();
         while (!in.isEmpty()) {
             double x = in.readDouble();
             double y = in.readDouble();
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
-            brute.insert(p);
+            //brute.insert(p);
         }
 
         while (true) {
@@ -181,9 +181,10 @@ public class kdTreeTest {
             StdDraw.clear();
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius(.01);
-            brute.draw();
+            kdtree.draw();
 
             // draw in blue the nearest neighbor (using kd-tree algorithm)
+            StdDraw.setPenRadius(.03);
             StdDraw.setPenColor(StdDraw.BLUE);
             kdtree.nearest(query).draw();
             StdDraw.show(0);

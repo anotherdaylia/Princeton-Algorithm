@@ -13,16 +13,11 @@ package com.lia.lab.KdTree;
  * Created by liqu on 3/6/16.
  */
 
-import com.lia.lab.Collinear.Point;
 import edu.princeton.cs.algs4.*;
 import java.util.TreeSet;
-import java.util.Comparator;
 
 public class PointSET {
     private TreeSet<Point2D> bst;
-    //private final Comparator<Point2D> BY_X = new ByX();
-    //private final Comparator<Point2D> BY_Y = new ByY();
-
 
     // construct an empty set of points
     public PointSET() {
@@ -71,16 +66,15 @@ public class PointSET {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
-        Point2D successor = bst.ceiling(p);
-        Point2D predecessor = bst.floor(p);
-
-        if (successor == null) return predecessor;
-        if (predecessor == null) return successor;
-        if (successor.compareTo(p) > predecessor.compareTo(p)) {
-            return predecessor;
-        } else {
-            return successor;
+        double min = Integer.MAX_VALUE;
+        Point2D np = new Point2D(0,0);
+        for (Point2D e : bst) {
+            if (p.distanceTo(e) < min) {
+                min = p.distanceTo(e);
+                np = e;
+            }
         }
+        return np;
     }
 
     public static void main(String[] args) { }

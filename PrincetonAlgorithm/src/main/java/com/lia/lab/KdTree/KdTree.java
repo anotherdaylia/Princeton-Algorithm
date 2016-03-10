@@ -9,13 +9,13 @@ import java.util.ArrayList;
 
 
 public class KdTree {
-    public Node root;
+    private Node root;
     private ArrayList<Point2D> points;
 
-    public class Node {
-        public Point2D p;
+    private class Node {
+        private Point2D p;
         private boolean isVertical;
-        public Node left, right;
+        private Node left, right;
         private int N;
 
         private Node(Point2D p, boolean isVertical, int N) {
@@ -23,8 +23,6 @@ public class KdTree {
             this.isVertical = isVertical;
             this.N = N;
         }
-
-        private Node(){ }
     }
 
     // construct an empty set of points
@@ -112,7 +110,7 @@ public class KdTree {
      * A subtree is searched only if it might contain a point contained in the query rectangle.
      */
     public Iterable<Point2D> range(RectHV rect) {
-        if (rect == null) throw new NullPointerException();
+        if (rect == null) throw new NullPointerException("No rectangle.");
         Queue<Point2D> list = new Queue<>();
 
         range(root, rect, list);
@@ -160,7 +158,55 @@ public class KdTree {
      * pruning of the second subtree.
      */
     public Point2D nearest(Point2D p) {
-        return null;
+        if (p == null) throw new NullPointerException("No query point");
+
+        double min = Integer.MAX_VALUE;
+        Point2D np = new Point2D(0,0);
+
+        return nearest(root, p, min, np);
+    }
+
+    private Point2D nearest(Node x, Point2D p, double min, Point2D np) {
+        if (x == null) return np;
+        if (p.distanceTo(x.p) < min) {
+            min = p.distanceTo(x.p);
+            np = x.p;
+        }
+
+        if (x.isVertical) {
+            double cmp = p.x() - x.p.x();
+            if (cmp <= 0) {
+                if (np.equals(x.p)) {
+                    np = nearest(x.left, p, min, np);
+                    np = nearest(x.right, p, min, np);
+                }
+                np = nearest(x.left, p, min, np);
+
+            } else {
+                if (np.equals(x.p)) {
+                    np = nearest(x.right, p, min, np);
+                    np = nearest(x.left, p, min, np);
+                }
+                np = nearest(x.right, p, min, np);
+            }
+        } else {
+            double cmp = p.y() - x.p.y();
+            if (cmp <= 0) {
+                if (np.equals(x.p)) {
+                    np = nearest(x.left, p, min, np);
+                    np = nearest(x.right, p, min, np);
+                }
+                np = nearest(x.left, p, min, np);
+
+            } else {
+                if (np.equals(x.p)) {
+                    np = nearest(x.right, p, min, np);
+                    np = nearest(x.left, p, min, np);
+                }
+                np = nearest(x.right, p, min, np);
+            }
+        }
+        return np;
     }
 
     public static void main(String[] args) {
