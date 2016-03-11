@@ -58,6 +58,7 @@ public class KdTree {
     private Node insert(Node x, Point2D p, boolean isVertical) {
         if (x == null) return new Node(p, isVertical, 1);
 
+        // Bug1: if inserting a point already exist, return the point x.
         if (p.equals(x.p)) return x;
 
         if (x.isVertical) { // compare x
@@ -83,7 +84,7 @@ public class KdTree {
 
     private boolean contains(Node x, Point2D p) {
         if (x == null) return false;
-        //System.out.println("x = (" + x.p.x() + ", " + x.p.y() + ")" );
+
         if (p.equals(x.p)) return true;
 
         if(x.isVertical) { // compare x
@@ -92,7 +93,7 @@ public class KdTree {
             else          return contains(x.right, p);
         } else { // compare y
             double cmp = p.y() - x.p.y();
-            //System.out.println("---");
+
             if (cmp <= 0) return contains(x.left, p);
             else          return contains(x.right, p);
         }
@@ -170,23 +171,27 @@ public class KdTree {
 
     private Point2D nearest(Node x, Point2D p, double min, Point2D np) {
         if (x == null) return np;
-        if (p.distanceTo(x.p) < min) {
-            min = p.distanceTo(x.p);
+//        if (p.distanceTo(x.p) < min) {
+//            min = p.distanceTo(x.p);
+//            np = x.p;
+//        }
+        if (p.distanceSquaredTo(x.p) < min) {
+            min = p.distanceSquaredTo(x.p);
             np = x.p;
         }
 
         if (x.isVertical) {
             double cmp = p.x() - x.p.x();
             if (cmp <= 0) {
-                if (np.equals(x.p)) {
-                    np = nearest(x.left, p, min, np);
+                if (np.equals(x.p)) { // if x.p is the nearest so far
+                    //np = nearest(x.left, p, min, np);
                     np = nearest(x.right, p, min, np);
                 }
                 np = nearest(x.left, p, min, np);
 
             } else {
                 if (np.equals(x.p)) {
-                    np = nearest(x.right, p, min, np);
+                    //np = nearest(x.right, p, min, np);
                     np = nearest(x.left, p, min, np);
                 }
                 np = nearest(x.right, p, min, np);
@@ -195,14 +200,14 @@ public class KdTree {
             double cmp = p.y() - x.p.y();
             if (cmp <= 0) {
                 if (np.equals(x.p)) {
-                    np = nearest(x.left, p, min, np);
+                    //np = nearest(x.left, p, min, np);
                     np = nearest(x.right, p, min, np);
                 }
                 np = nearest(x.left, p, min, np);
 
             } else {
                 if (np.equals(x.p)) {
-                    np = nearest(x.right, p, min, np);
+                    //np = nearest(x.right, p, min, np);
                     np = nearest(x.left, p, min, np);
                 }
                 np = nearest(x.right, p, min, np);

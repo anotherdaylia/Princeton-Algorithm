@@ -18,7 +18,7 @@ import java.util.TreeSet;
 
 public class PointSET {
     private TreeSet<Point2D> bst;
-    private Point2D np;
+    private Point2D np; // Bug: need this to make sure nearest() return null in the beginning
 
     // construct an empty set of points
     public PointSET() {
@@ -71,8 +71,8 @@ public class PointSET {
 
         double min = Integer.MAX_VALUE;
         for (Point2D e : bst) {
-            if (p.distanceTo(e) < min) {
-                min = p.distanceTo(e);
+            if (p.distanceSquaredTo(e) < min) {
+                min = p.distanceSquaredTo(e);
                 np = e;
             }
         }
