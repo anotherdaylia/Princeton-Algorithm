@@ -18,6 +18,7 @@ import java.util.TreeSet;
 
 public class PointSET {
     private TreeSet<Point2D> bst;
+    private Point2D np;
 
     // construct an empty set of points
     public PointSET() {
@@ -53,7 +54,7 @@ public class PointSET {
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
-        if(bst.isEmpty()) return null;
+        if(rect == null) throw new NullPointerException("Rectangle is null");
 
         Queue<Point2D> list = new Queue<>();
         for (Point2D p : bst) {
@@ -66,8 +67,9 @@ public class PointSET {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
+        if(p == null) throw new NullPointerException("point is null");
+
         double min = Integer.MAX_VALUE;
-        Point2D np = new Point2D(0,0);
         for (Point2D e : bst) {
             if (p.distanceTo(e) < min) {
                 min = p.distanceTo(e);

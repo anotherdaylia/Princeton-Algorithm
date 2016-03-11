@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class KdTree {
     private Node root;
+    private Point2D np;
     private ArrayList<Point2D> points;
 
     private class Node {
@@ -56,6 +57,8 @@ public class KdTree {
 
     private Node insert(Node x, Point2D p, boolean isVertical) {
         if (x == null) return new Node(p, isVertical, 1);
+
+        if (p.equals(x.p)) return x;
 
         if (x.isVertical) { // compare x
             double cmp = p.x() - x.p.x();
@@ -159,9 +162,8 @@ public class KdTree {
      */
     public Point2D nearest(Point2D p) {
         if (p == null) throw new NullPointerException("No query point");
-
         double min = Integer.MAX_VALUE;
-        Point2D np = new Point2D(0,0);
+        //Point2D np = new Point2D(0,0);
 
         return nearest(root, p, min, np);
     }
