@@ -2,6 +2,7 @@ package com.lia.lab.KdTree;
 
 /**
  * Created by liqu on 3/6/16.
+ * Compeleted on 3/11/16
  */
 
 import edu.princeton.cs.algs4.*;
@@ -123,7 +124,6 @@ public class KdTree {
 
     private void range(Node x, RectHV rect, Queue<Point2D> list) {
         if (x == null) return;
-        //System.out.println("??");
 
         if (x.isVertical) {
             if (rect.xmax() < x.p.x()) {
@@ -168,53 +168,51 @@ public class KdTree {
         return nearest(root, p, Double.MAX_VALUE, root.p);
     }
 
-    private Point2D nearest(Node x, Point2D q, double nearestDistance, Point2D np) {
+    private Point2D nearest(Node x, Point2D q, double d, Point2D np) {
         if (x == null) return np;
 
         double distance = q.distanceSquaredTo(x.p);
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
+        if (distance < d) {
+            d = distance;
             np = x.p;
         }
 
         if (x.isVertical) {
             double cmp = q.x() - x.p.x();
             if (cmp <= 0) {
-                np = nearest(x.left, q, nearestDistance, np);
-
-                nearestDistance = q.distanceSquaredTo(np);
-                if (x.right != null && (q.x() + Math.sqrt(nearestDistance)) > x.p.x()) {
-
-                    np = nearest(x.right, q, nearestDistance, np);
+                np = nearest(x.left, q, d, np);
+                d = q.distanceSquaredTo(np);
+                // the distance need to be the square root of the Euclidean distance
+                if (x.right != null && (q.x() + Math.sqrt(d)) > x.p.x()) {
+                    np = nearest(x.right, q, d, np);
                 }
             } else {
-                np = nearest(x.right, q, nearestDistance, np);
-                //System.out.println("nearestDistance: " + nearestDistance);
-                nearestDistance = q.distanceSquaredTo(np);
-                //System.out.println("nearestDistance: " + nearestDistance);
-                if (x.left != null && (q.x() - Math.sqrt(nearestDistance)) <= x.p.x()) {
-                    np = nearest(x.left, q, nearestDistance, np);
+                np = nearest(x.right, q, d, np);
+                d = q.distanceSquaredTo(np);
+                if (x.left != null && (q.x() - Math.sqrt(d)) <= x.p.x()) {
+                    np = nearest(x.left, q, d, np);
                 }
             }
         } else {
             double cmp = q.y() - x.p.y();
             if (cmp <= 0) {
-                np = nearest(x.left, q, nearestDistance, np);
-                nearestDistance = q.distanceSquaredTo(np);
-
-                if (x.right != null && (q.y() + Math.sqrt(nearestDistance) > x.p.y())) {
-                    np = nearest(x.right, q, nearestDistance, np);
+                np = nearest(x.left, q, d, np);
+                d = q.distanceSquaredTo(np);
+                if (x.right != null && (q.y() + Math.sqrt(d) > x.p.y())) {
+                    np = nearest(x.right, q, d, np);
                 }
             } else {
-                np = nearest(x.right, q, nearestDistance, np);
-                nearestDistance = q.distanceSquaredTo(np);
-                if (x.left != null && (q.y() - Math.sqrt(nearestDistance)) <= x.p.y()) {
-                    np = nearest(x.left, q, nearestDistance, np);
+                np = nearest(x.right, q, d, np);
+                d = q.distanceSquaredTo(np);
+                if (x.left != null && (q.y() - Math.sqrt(d)) <= x.p.y()) {
+                    np = nearest(x.left, q, d, np);
                 }
             }
         }
         return np;
     }
+
+
 
     public static void main(String[] args) {
 

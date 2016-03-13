@@ -21,7 +21,6 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 import org.junit.Test;
-import java.util.*;
 
 public class kdTreeTest {
 
@@ -53,7 +52,7 @@ public class kdTreeTest {
         kdtree.insert(new Point2D(0.6, 0.6));
         kdtree.insert(new Point2D(0.8, 0.8));
         System.out.println("after insertion: ");
-        System.out.println("root.left: " + kdtree.root.left.p.x() + ", " + kdtree.root.left.p.y());
+        //System.out.println("root.left: " + kdtree.root.left.p.x() + ", " + kdtree.root.left.p.y());
         System.out.println("contain (0.5, 0.5)? " + kdtree.contains(new Point2D(0.5, 0.5)));
         System.out.println("contain (0.6, 0.6)? " + kdtree.contains(new Point2D(0.6, 0.6)));
         System.out.println("isEmpty: " + kdtree.isEmpty());
@@ -151,7 +150,6 @@ public class kdTreeTest {
             StdDraw.show(40);
         }
     }
-
     @Test
     public void NearestNeighborTest() {
         String filename = "src/test/resources/pointset_sm.txt";
@@ -179,6 +177,47 @@ public class kdTreeTest {
 
             // draw all of the points
             StdDraw.clear();
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.setPenRadius(.01);
+            kdtree.draw();
+
+            // draw in blue the nearest neighbor (using kd-tree algorithm)
+            StdDraw.setPenRadius(.03);
+            StdDraw.setPenColor(StdDraw.BLUE);
+            kdtree.nearest(query).draw();
+            StdDraw.show(0);
+            StdDraw.show(40);
+        }
+    }
+
+
+    @Test
+    public void nearestTest() {
+        String filename = "src/test/resources/pointset_sm.txt";
+        In in = new In(filename);
+
+        StdDraw.show(0);
+
+        // initialize the two data structures with point from standard input
+        //PointSET brute = new PointSET();
+        KdTree kdtree = new KdTree();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            kdtree.insert(p);
+            //brute.insert(p);
+        }
+
+        while(true) {
+            Point2D query = new Point2D(0.83, 0.83);
+            StdDraw.clear();
+            StdDraw.setPenColor(StdDraw.GREEN);
+            StdDraw.setPenRadius(.01);
+            query.draw();
+
+            // draw all of the points
+            //StdDraw.clear();
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius(.01);
             kdtree.draw();
